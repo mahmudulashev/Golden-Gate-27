@@ -1,0 +1,955 @@
+/* macOS 27 — Liquid Glass Design System */
+/* Extracted from macos27.kimi.page reference */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
+
+:root {
+  /* ── Liquid Glass Core ── */
+  --lg-blur-strong: 30px;
+  --lg-blur-medium: 20px;
+  --lg-blur-light: 12px;
+  --lg-saturate: 180%;
+  --lg-hairline: rgba(255,255,255,.2);
+  --lg-hairline-dark: rgba(255,255,255,.14);
+  --lg-specular-top: inset 1px 1px 0 rgba(255,255,255,.5);
+  --lg-inner-glow: inset 0 0 12px rgba(255,255,255,.18);
+  --lg-shadow-ambient: 0 8px 32px rgba(0,0,0,.2);
+  --lg-shadow-window: 0 24px 72px rgba(0,0,0,.35), 0 2px 12px rgba(0,0,0,.18), 0 0 0 .5px rgba(0,0,0,.25);
+  --lg-shadow-window-inactive: 0 10px 34px rgba(0,0,0,.22), 0 0 0 .5px rgba(0,0,0,.18);
+  --lg-shadow-menu: 0 10px 34px rgba(0,0,0,.28), 0 0 0 .5px rgba(0,0,0,.12);
+  --lg-scrim-clear: rgba(0,0,0,.35);
+
+  /* ── Radii ── */
+  --radius-window: 16px;
+  --radius-window-plain: 10px;
+  --radius-sidebar: 12px;
+  --radius-toolbar-pill: 10px;
+  --radius-dock: 24px;
+  --radius-dock-icon: 22.37%;
+  --radius-menu: 8px;
+  --radius-menu-item: 5px;
+  --radius-cc-panel: 20px;
+  --radius-cc-tile: 14px;
+  --radius-widget: 14px;
+  --radius-notification: 14px;
+  --radius-spotlight: 20px;
+  --radius-button: 8px;
+  --radius-capsule: 999px;
+
+  /* ── Easing & Duration ── */
+  --ease-ios: cubic-bezier(.32, .72, 0, 1);
+  --ease-out-strong: cubic-bezier(.23, 1, .32, 1);
+  --ease-inout-strong: cubic-bezier(.77, 0, .175, 1);
+  --ease-spring-bounce: cubic-bezier(.34, 1.35, .44, 1);
+  --dur-micro: .12s;
+  --dur-fast: .18s;
+  --dur-ui: .25s;
+  --dur-panel: .35s;
+  --dur-sheet: .5s;
+
+  /* ── Semantic Colors (Light) ── */
+  --label: rgba(0,0,0,.85);
+  --label-2: rgba(0,0,0,.5);
+  --label-3: rgba(0,0,0,.26);
+  --label-4: rgba(0,0,0,.1);
+  --separator: rgba(0,0,0,.1);
+  --window-bg: #ECECEC;
+  --control-bg: #FFFFFF;
+  --accent-blue: #007AFF;
+  --accent-purple: #A550A7;
+  --accent-pink: #F74F9E;
+  --accent-red: #FF5257;
+  --accent-orange: #F7821B;
+  --accent-yellow: #FFC600;
+  --accent-green: #62BA46;
+  --accent-graphite: #8C8C8C;
+  --accent: var(--accent-blue);
+  --focus-ring: color-mix(in srgb, var(--accent) 25%, transparent);
+
+  /* ── Typography ── */
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-mono: "SF Mono", "Fira Code", ui-monospace, monospace;
+  --fs-menubar: 14px;
+  --fs-title: 13px;
+  --fs-body: 13px;
+  --fs-small: 11px;
+
+  /* ── Layout Tokens ── */
+  --menubar-h: 25px;
+  --dock-icon-size: 48px;
+  --dock-pad: 7px;
+  --dock-gap: 4px;
+  --dock-margin: 10px;
+  --tl-size: 12px;
+  --tl-gap: 8px;
+  --tl-inset: 12px;
+  --tl-close: #FF5F57;
+  --tl-min: #FEBC2E;
+  --tl-zoom: #28C840;
+  --tl-inactive: #D6D6D6;
+  --titlebar-h: 44px;
+  --window-min-w: 320px;
+  --window-min-h: 240px;
+  --resize-hit: 6px;
+
+  /* ── Z-Index Scale ── */
+  --z-desktop: 0;
+  --z-desktop-icons: 10;
+  --z-windows: 100;
+  --z-dock: 9000;
+  --z-menubar: 9100;
+  --z-menus: 9200;
+  --z-spotlight: 9300;
+  --z-lock: 10000;
+  --z-boot: 11000;
+
+  /* Legacy compat */
+  --text-primary: var(--label);
+  --text-secondary: var(--label-2);
+  --text-muted: var(--label-3);
+  --accent-color: var(--accent);
+  --glass-blur: 28px;
+  --glass-saturate: var(--lg-saturate);
+  --window-radius: var(--radius-window);
+}
+
+/* ── Dark Theme ── */
+[data-theme="dark"] {
+  --label: rgba(255,255,255,.85);
+  --label-2: rgba(255,255,255,.55);
+  --label-3: rgba(255,255,255,.25);
+  --label-4: rgba(255,255,255,.1);
+  --separator: rgba(255,255,255,.12);
+  --window-bg: #2B2B2D;
+  --control-bg: #3A3A3C;
+  --accent-blue: #0A84FF;
+  --lg-shadow-window: 0 24px 72px rgba(0,0,0,.6), 0 0 0 .5px rgba(0,0,0,.8);
+  --lg-shadow-window-inactive: 0 10px 34px rgba(0,0,0,.4), 0 0 0 .5px rgba(0,0,0,.6);
+  --lg-shadow-menu: 0 10px 34px rgba(0,0,0,.5), 0 0 0 .5px rgba(255,255,255,.08);
+  --lg-hairline: var(--lg-hairline-dark);
+  --text-primary: var(--label);
+  --text-secondary: var(--label-2);
+}
+
+/* ── Base Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: var(--label);
+  font-size: var(--fs-body);
+  background: #000;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: inherit;
+}
+
+/* ── Scrollbar ── */
+* { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,.28) transparent; }
+[data-theme="dark"] * { scrollbar-color: rgba(255,255,255,.28) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.28);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.45); border: 1px solid transparent; background-clip: padding-box; }
+*::-webkit-scrollbar-corner { background: transparent; }
+
+/* ══════════════════════════════════════════
+   GLASS COMPONENT CLASSES
+   ══════════════════════════════════════════ */
+
+.glass-menu {
+  border-radius: var(--radius-menu);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  background: rgba(250,250,252,.75);
+  box-shadow: var(--lg-shadow-menu);
+}
+[data-theme="dark"] .glass-menu { background: rgba(38,38,42,.75); }
+
+.glass-dock {
+  border-radius: var(--radius-dock);
+  backdrop-filter: blur(24px) saturate(170%);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  background: rgba(255,255,255,.25);
+  box-shadow: var(--lg-specular-top), inset 0 0 0 .5px var(--lg-hairline), 0 12px 32px rgba(0,0,0,.22);
+  padding: var(--dock-pad);
+}
+[data-theme="dark"] .glass-dock { background: rgba(40,40,45,.35); }
+
+.glass-sidebar {
+  border-radius: var(--radius-sidebar);
+  backdrop-filter: blur(30px) saturate(170%);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  background: rgba(242,242,247,.55);
+  box-shadow: var(--lg-shadow-menu);
+}
+[data-theme="dark"] .glass-sidebar { background: rgba(32,32,36,.55); }
+
+.glass-pill {
+  border-radius: var(--radius-toolbar-pill);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(255,255,255,.45);
+  box-shadow: var(--lg-specular-top), inset 0 0 0 .5px var(--lg-hairline), 0 2px 8px rgba(0,0,0,.08);
+  transition: transform var(--dur-micro) var(--ease-out-strong), background var(--dur-micro);
+}
+.glass-pill:active { transform: scale(.96); }
+[data-theme="dark"] .glass-pill { background: rgba(60,60,66,.45); }
+
+.glass-panel {
+  border-radius: var(--radius-cc-panel);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  background: rgba(246,246,250,.6);
+  box-shadow: var(--lg-shadow-menu);
+}
+[data-theme="dark"] .glass-panel { background: rgba(30,30,34,.65); }
+
+.glass-spotlight {
+  border-radius: var(--radius-spotlight);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  background: rgba(245,245,248,.82);
+  box-shadow: var(--lg-shadow-window);
+}
+[data-theme="dark"] .glass-spotlight { background: rgba(32,32,36,.84); }
+
+.glass-menubar {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: background var(--dur-ui), backdrop-filter var(--dur-ui);
+}
+.glass-menubar[data-solid="true"] {
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  background: rgba(246,246,250,.35);
+}
+[data-theme="dark"] .glass-menubar[data-solid="true"] { background: rgba(30,30,34,.4); }
+
+.glass-banner {
+  border-radius: var(--radius-notification);
+  backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  background: rgba(248,248,250,.78);
+  box-shadow: var(--lg-shadow-menu);
+}
+[data-theme="dark"] .glass-banner { background: rgba(40,40,44,.8); }
+
+/* ── Window Surface ── */
+.surface-window {
+  background: var(--window-bg);
+  border-radius: var(--radius-window);
+}
+
+.surface-content {
+  background: var(--control-bg);
+}
+
+/* ══════════════════════════════════════════
+   WINDOW CHROME
+   ══════════════════════════════════════════ */
+
+.glass-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--window-bg);
+  border-radius: var(--radius-window);
+  box-shadow: var(--lg-shadow-window);
+  overflow: hidden;
+  transition: box-shadow var(--dur-ui) var(--ease-ios);
+  user-select: none;
+}
+
+.glass-window:not(.active) {
+  box-shadow: var(--lg-shadow-window-inactive);
+}
+
+.glass-window.active .window-titlebar {
+  color: var(--label);
+}
+
+.glass-window:not(.active) .window-titlebar {
+  color: var(--label-2);
+}
+
+/* Title bar */
+.window-titlebar {
+  height: var(--titlebar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: transparent;
+  border-bottom: 1px solid var(--separator);
+  flex-shrink: 0;
+  cursor: grab;
+  position: relative;
+  user-select: none;
+}
+
+.window-titlebar:active {
+  cursor: grabbing;
+}
+
+.window-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--fs-title);
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
+}
+
+/* ── Traffic Lights ── */
+.tl-group {
+  display: flex;
+  gap: var(--tl-gap);
+  align-items: center;
+  z-index: 10;
+}
+
+.tl {
+  width: var(--tl-size);
+  height: var(--tl-size);
+  border-radius: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 1px rgba(0,0,0,.25);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  outline: none;
+  transition: filter var(--dur-micro);
+}
+
+.tl svg {
+  opacity: 0;
+  transition: opacity var(--dur-micro);
+  width: 8px;
+  height: 8px;
+}
+
+.tl-group:hover .tl:not(.tl-inactive) svg {
+  opacity: 1;
+}
+
+.tl-close { background: var(--tl-close); }
+.tl-min { background: var(--tl-min); }
+.tl-zoom { background: var(--tl-zoom); }
+.tl-inactive { background: var(--tl-inactive) !important; }
+
+/* ── Window Transitions ── */
+.window-transition {
+  transition: transform .3s var(--ease-ios), opacity .25s ease, box-shadow var(--dur-ui) var(--ease-ios);
+}
+
+.window-minimize-to-dock {
+  opacity: 0;
+  transform: scale(0.1) translateY(400px);
+  pointer-events: none;
+}
+
+.window-opening {
+  animation: windowOpen .35s var(--ease-ios) forwards;
+}
+
+@keyframes windowOpen {
+  0% { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ══════════════════════════════════════════
+   MENU BAR
+   ══════════════════════════════════════════ */
+
+.menu-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--menubar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  background: rgba(246,246,250,.35);
+  border-bottom: .5px solid rgba(255,255,255,.15);
+  font-size: var(--fs-menubar);
+  font-weight: 500;
+  z-index: var(--z-menubar);
+  user-select: none;
+}
+
+.menubar-text {
+  color: var(--label);
+  text-shadow: 0 1px 2px rgba(0,0,0,.22), 0 0 8px rgba(0,0,0,.12);
+}
+
+.menu-bar-left, .menu-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.menu-bar-left .menu-item,
+.menu-bar-right .menu-item {
+  color: white;
+  cursor: pointer;
+  padding: 2px 12px;
+  border-radius: var(--radius-menu-item);
+  transition: background var(--dur-micro);
+  font-size: var(--fs-menubar);
+  text-shadow: 0 1px 2px rgba(0,0,0,.22), 0 0 8px rgba(0,0,0,.12);
+  white-space: nowrap;
+  line-height: 21px;
+}
+
+.menu-bar-left .menu-item:hover,
+.menu-bar-right .menu-item:hover {
+  background: rgba(255,255,255,.2);
+}
+
+.menu-bar-left .menu-item.active {
+  background: rgba(255,255,255,.25);
+}
+
+/* Apple menu dropdown */
+.apple-menu-dropdown {
+  position: absolute;
+  top: calc(var(--menubar-h) + 4px);
+  left: 8px;
+  min-width: 220px;
+  padding: 5px;
+  z-index: var(--z-menus);
+}
+
+.apple-menu-dropdown .menu-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  border-radius: var(--radius-menu-item);
+  font-size: var(--fs-body);
+  cursor: pointer;
+  color: var(--label);
+  text-shadow: none;
+  min-height: 22px;
+  line-height: 1.4;
+}
+
+.apple-menu-dropdown .menu-dropdown-item:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.apple-menu-dropdown .menu-dropdown-item .shortcut {
+  color: var(--label-2);
+  font-size: var(--fs-small);
+  margin-left: 20px;
+}
+
+.apple-menu-dropdown .menu-dropdown-item:hover .shortcut {
+  color: rgba(255,255,255,.7);
+}
+
+.apple-menu-dropdown .menu-separator {
+  height: 1px;
+  background: var(--separator);
+  margin: 5px 10px;
+}
+
+/* ══════════════════════════════════════════
+   DOCK
+   ══════════════════════════════════════════ */
+
+.dock-wrapper {
+  position: absolute;
+  bottom: var(--dock-margin);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-dock);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--dock-gap);
+}
+
+.dock-icon-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform .15s var(--ease-out-strong);
+}
+
+.dock-icon {
+  width: var(--dock-icon-size);
+  height: var(--dock-icon-size);
+  border-radius: var(--radius-dock-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,.18), inset 0 0 0 .5px rgba(255,255,255,.25);
+  transition: width .15s var(--ease-out-strong), height .15s var(--ease-out-strong);
+}
+
+/* Icon gradient overlay (like real macOS icons) */
+.dock-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.05) 45%, rgba(0,0,0,.04));
+}
+
+.dock-icon img, .dock-icon svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Dock launch bounce */
+.dock-icon.launching {
+  animation: dockLaunch .9s var(--ease-out-strong) 2;
+  transform-origin: bottom center;
+}
+
+@keyframes dockLaunch {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-24px); }
+  60% { transform: translateY(-6px); }
+}
+
+/* Dock divider (vertical pill between groups) */
+.dock-divider {
+  width: 1px;
+  height: 36px;
+  background: rgba(255,255,255,.3);
+  margin: 0 6px;
+  align-self: center;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .dock-divider { background: rgba(255,255,255,.15); }
+
+/* Notification badge */
+.dock-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #FF3B30;
+  color: white;
+  border-radius: 50%;
+  min-width: 16px;
+  height: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1.5px solid white;
+  z-index: 5;
+}
+
+/* Running indicator dot */
+.dock-icon-dot {
+  position: absolute;
+  bottom: -5px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,.85);
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+/* Tooltip */
+.dock-tooltip {
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95) translateY(5px);
+  padding: 4px 10px;
+  border-radius: var(--radius-menu);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .1s ease, transform .1s ease;
+  z-index: 10005;
+  color: var(--label);
+}
+
+.dock-icon-wrapper:hover .dock-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) scale(1) translateY(0);
+}
+
+/* ══════════════════════════════════════════
+   WIDGETS
+   ══════════════════════════════════════════ */
+
+.widgets-panel {
+  position: absolute;
+  top: 40px;
+  left: 16px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: var(--z-desktop-icons);
+  pointer-events: auto;
+}
+
+.widget-card {
+  background: rgba(246,246,250,.6);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-radius: var(--radius-widget);
+  box-shadow: var(--lg-shadow-menu);
+  padding: 14px;
+  color: var(--label);
+}
+[data-theme="dark"] .widget-card {
+  background: rgba(30,30,34,.6);
+}
+
+/* ══════════════════════════════════════════
+   DESKTOP ICONS
+   ══════════════════════════════════════════ */
+
+.desktop-icons-grid {
+  position: absolute;
+  top: 45px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: var(--z-desktop-icons);
+}
+
+.desktop-icon {
+  width: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.desktop-icon-img {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desktop-icon-name {
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 1px 4px rgba(0,0,0,.8), 0 0 8px rgba(0,0,0,.35);
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* ══════════════════════════════════════════
+   LOCK SCREEN
+   ══════════════════════════════════════════ */
+
+.lock-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 999999 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(0,0,0,.15);
+  backdrop-filter: blur(40px) brightness(.8) saturate(1.3);
+  -webkit-backdrop-filter: blur(40px) brightness(.8) saturate(1.3);
+}
+
+.lock-screen-bg {
+  position: absolute;
+  inset: -20px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(.75) saturate(1.2);
+}
+
+.lock-screen-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: white;
+}
+
+.lock-screen-date {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: .5px;
+  opacity: .9;
+}
+
+.lock-screen-time {
+  font-size: 96px;
+  font-weight: 200;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 60px;
+}
+
+.lock-screen-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,.3), inset 0 0 0 2px rgba(255,255,255,.3);
+  margin-bottom: 8px;
+}
+
+.lock-screen-username {
+  font-size: 15px;
+  font-weight: 500;
+  opacity: .9;
+}
+
+.lock-screen-hint {
+  font-size: 13px;
+  opacity: .55;
+  margin-top: 4px;
+}
+
+.lock-screen-fade {
+  animation: lockFade .6s var(--ease-ios) forwards;
+}
+
+@keyframes lockFade {
+  0% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+
+/* ══════════════════════════════════════════
+   LAUNCHPAD
+   ══════════════════════════════════════════ */
+
+.launchpad-overlay {
+  position: absolute;
+  top: var(--menubar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  z-index: 9500;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 28px;
+  padding: 60px;
+  align-content: start;
+  overflow-y: auto;
+  animation: launchpadIn .3s var(--ease-ios);
+}
+
+@keyframes launchpadIn {
+  0% { opacity: 0; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ══════════════════════════════════════════
+   GLASS UTILITIES
+   ══════════════════════════════════════════ */
+
+.glass-button {
+  background: rgba(255,255,255,.5);
+  border: 1px solid rgba(255,255,255,.4);
+  color: var(--label);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  padding: 6px 12px;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s ease;
+  outline: none;
+}
+.glass-button:hover {
+  background: rgba(255,255,255,.75);
+  border-color: rgba(255,255,255,.6);
+  transform: translateY(-.5px);
+}
+.glass-button:active {
+  background: rgba(255,255,255,.4);
+  transform: translateY(.5px);
+}
+.glass-button.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.glass-input {
+  background: rgba(255,255,255,.5);
+  border: 1px solid rgba(0,0,0,.1);
+  color: var(--label);
+  font-family: var(--font-ui);
+  padding: 6px 10px;
+  border-radius: var(--radius-button);
+  outline: none;
+  font-size: var(--fs-body);
+  transition: all .15s ease;
+}
+.glass-input:focus {
+  border-color: var(--accent);
+  background: rgba(255,255,255,.85);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* Wallpaper */
+.wallpaper-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+}
+
+/* ══════════════════════════════════════════
+   APP-SPECIFIC OVERRIDES
+   ══════════════════════════════════════════ */
+
+/* Finder sidebar */
+.finder-sidebar {
+  width: 180px;
+  background: rgba(242,242,247,.55);
+  backdrop-filter: blur(30px) saturate(170%);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  border-right: 1px solid var(--separator);
+  overflow-y: auto;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+
+.finder-content {
+  flex: 1;
+  background: var(--control-bg);
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* Safari */
+.safari-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--separator);
+  background: var(--window-bg);
+}
+
+.safari-url-bar {
+  flex: 1;
+  height: 28px;
+  border-radius: var(--radius-button);
+  background: var(--control-bg);
+  border: 1px solid var(--separator);
+  padding: 0 12px;
+  font-size: var(--fs-body);
+  color: var(--label-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Notes 3-pane */
+.notes-sidebar {
+  width: 170px;
+  background: rgba(242,242,247,.55);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border-right: 1px solid var(--separator);
+  overflow-y: auto;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+
+.notes-list {
+  width: 220px;
+  border-right: 1px solid var(--separator);
+  overflow-y: auto;
+  padding: 8px;
+  background: var(--control-bg);
+  flex-shrink: 0;
+}
+
+.notes-editor {
+  flex: 1;
+  background: var(--control-bg);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Settings sidebar */
+.settings-sidebar {
+  width: 220px;
+  background: rgba(242,242,247,.55);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border-right: 1px solid var(--separator);
+  overflow-y: auto;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+
+.settings-content {
+  flex: 1;
+  background: var(--control-bg);
+  overflow-y: auto;
+  padding: 24px;
+}
