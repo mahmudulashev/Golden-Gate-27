@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 
-export default function SystemSettings({ activeWallpaper, onWallpaperChange, blurAmount, onBlurChange, dockMagnify, onDockMagnifyToggle }) {
+export default function SystemSettings({
+  activeWallpaper,
+  onWallpaperChange,
+  blurAmount,
+  onBlurChange,
+  dockMagnify,
+  onDockMagnifyToggle,
+  showWidgets,
+  onToggleWidgets
+}) {
   const [selectedPage, setSelectedPage] = useState('appearance');
   const [currentTheme, setCurrentTheme] = useState('light');
   const [accentColor, setAccentColor] = useState('blue');
@@ -266,6 +275,25 @@ export default function SystemSettings({ activeWallpaper, onWallpaperChange, blu
                   onChange={e => onBlurChange(Number(e.target.value))}
                   style={{ width: '100%', accentColor: 'var(--accent)' }}
                 />
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', marginTop: '16px' }}>
+                <div style={{ fontSize: '13px' }}>Show Widgets on Desktop</div>
+                <div
+                  onClick={() => onToggleWidgets && onToggleWidgets()}
+                  style={{
+                    width: '42px', height: '24px', borderRadius: '12px',
+                    background: showWidgets ? 'var(--accent)' : 'var(--label-3)',
+                    cursor: 'pointer', position: 'relative', transition: 'background .2s'
+                  }}
+                >
+                  <div style={{
+                    width: '20px', height: '20px', borderRadius: '50%',
+                    background: 'white', position: 'absolute', top: '2px',
+                    left: showWidgets ? '20px' : '2px',
+                    transition: 'left .2s', boxShadow: '0 1px 3px rgba(0,0,0,.2)'
+                  }} />
+                </div>
               </div>
             </div>
           </div>

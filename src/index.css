@@ -76,8 +76,8 @@
 
   /* ── Layout Tokens ── */
   --menubar-h: 25px;
-  --dock-icon-size: 48px;
-  --dock-pad: 7px;
+  --dock-icon-size: 44px;
+  --dock-pad: 6px;
   --dock-gap: 4px;
   --dock-margin: 10px;
   --tl-size: 12px;
@@ -184,14 +184,24 @@ html, body, #root {
 [data-theme="dark"] .glass-menu { background: rgba(38,38,42,.75); }
 
 .glass-dock {
-  border-radius: var(--radius-dock);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  background: rgba(255,255,255,.25);
-  box-shadow: var(--lg-specular-top), inset 0 0 0 .5px var(--lg-hairline), 0 12px 32px rgba(0,0,0,.22);
-  padding: var(--dock-pad);
+  border-radius: 24px;
+  backdrop-filter: blur(40px) saturate(210%);
+  -webkit-backdrop-filter: blur(40px) saturate(210%);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.22), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+  padding: 8px 12px;
 }
-[data-theme="dark"] .glass-dock { background: rgba(40,40,45,.35); }
+[data-theme="dark"] .glass-dock { 
+  background: rgba(30, 30, 35, 0.28); 
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.45), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
 
 .glass-sidebar {
   border-radius: var(--radius-sidebar);
@@ -521,24 +531,33 @@ html, body, #root {
 .dock-icon {
   width: var(--dock-icon-size);
   height: var(--dock-icon-size);
-  border-radius: var(--radius-dock-icon);
+  border-radius: 13.5px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,.18), inset 0 0 0 .5px rgba(255,255,255,.25);
-  transition: width .15s var(--ease-out-strong), height .15s var(--ease-out-strong);
+  /* Rich 3D Apple-like Shadowing and Lighting */
+  box-shadow: 
+    0 5px 12px rgba(0, 0, 0, 0.22), 
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5), 
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.22);
+  transition: width .15s var(--ease-out-strong), height .15s var(--ease-out-strong), transform 0.1s var(--ease-out-strong);
+}
+.dock-icon:active {
+  transform: scale(0.92);
 }
 
-/* Icon gradient overlay (like real macOS icons) */
+/* Icon gradient overlay for glossy liquid glass style */
 .dock-icon::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.05) 45%, rgba(0,0,0,.04));
+  background: linear-gradient(135deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+  z-index: 2;
 }
 
 .dock-icon img, .dock-icon svg {
@@ -548,8 +567,8 @@ html, body, #root {
 }
 
 /* Dock launch bounce */
-.dock-icon.launching {
-  animation: dockLaunch .9s var(--ease-out-strong) 2;
+.dock-icon.launching, .dock-bounce {
+  animation: dockLaunch .75s var(--ease-out-strong) 2;
   transform-origin: bottom center;
 }
 
