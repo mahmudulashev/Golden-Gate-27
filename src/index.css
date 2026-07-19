@@ -219,6 +219,8 @@ html, body, #root {
   -webkit-backdrop-filter: blur(30px) saturate(180%);
   background: rgba(246,246,250,.6);
   box-shadow: var(--lg-shadow-menu);
+  animation: menuPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top right;
 }
 [data-theme="dark"] .glass-panel { background: rgba(30,30,34,.65); }
 
@@ -228,6 +230,8 @@ html, body, #root {
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   background: rgba(245,245,248,.82);
   box-shadow: var(--lg-shadow-window);
+  animation: menuPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: center;
 }
 [data-theme="dark"] .glass-spotlight { background: rgba(32,32,36,.84); }
 
@@ -446,6 +450,13 @@ html, body, #root {
   min-width: 220px;
   padding: 5px;
   z-index: var(--z-menus);
+  animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top left;
+}
+
+@keyframes menuPop {
+  0% { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .apple-menu-dropdown .menu-dropdown-item {
@@ -833,20 +844,46 @@ html, body, #root {
 }
 
 .glass-input {
-  background: rgba(255,255,255,.5);
+  background: rgba(0,0,0,.05);
   border: 1px solid rgba(0,0,0,.1);
   color: var(--label);
   font-family: var(--font-ui);
+  font-size: var(--fs-body);
   padding: 6px 10px;
   border-radius: var(--radius-button);
   outline: none;
-  font-size: var(--fs-body);
-  transition: all .15s ease;
+  transition: border .2s ease;
 }
-.glass-input:focus {
-  border-color: var(--accent);
-  background: rgba(255,255,255,.85);
-  box-shadow: 0 0 0 3px var(--focus-ring);
+.glass-input:focus { border-color: var(--accent); }
+
+/* Custom Sliders for Control Center */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: rgba(0,0,0,.08);
+  border-radius: 12px;
+  outline: none;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.06);
+}
+[data-theme="dark"] input[type="range"] { background: rgba(255,255,255,.12); }
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.15);
+  box-shadow: -100vw 0 0 100vw var(--accent-blue), 0 2px 5px rgba(0,0,0,.15);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(0.9);
 }
 
 /* Wallpaper */
@@ -866,9 +903,7 @@ html, body, #root {
 /* Finder sidebar */
 .finder-sidebar {
   width: 180px;
-  background: rgba(242,242,247,.55);
-  backdrop-filter: blur(30px) saturate(170%);
-  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  background: rgba(242,242,247,.4);
   border-right: 1px solid var(--separator);
   overflow-y: auto;
   padding: 8px 0;
@@ -877,7 +912,7 @@ html, body, #root {
 
 .finder-content {
   flex: 1;
-  background: var(--control-bg);
+  background: rgba(255,255,255,.6);
   overflow-y: auto;
   padding: 16px;
 }
