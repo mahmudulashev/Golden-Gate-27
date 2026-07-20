@@ -29,12 +29,14 @@ import Numbers from './apps/Numbers';
 import Reminders from './apps/Reminders';
 
 const wallpaperMap = {
-  'clear-lake': "url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=2070')",
-  'sunset': "url('https://images.unsplash.com/photo-1472214222555-d4aea475c4b5?q=80&w=2070')",
-  'forest': "url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070')",
-  'night': "url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=2070')",
-  'mountain': "url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070')",
-  'desert': "url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=2070')"
+  'clear-lake': "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=2000&q=80')",
+  'sunset': "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80')",
+  'forest': "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2000&q=80')",
+  'night': "linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.35)), url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=2000&q=80')",
+  'mountain': "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80')",
+  'desert': "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=2000&q=80')",
+  'aurora': "linear-gradient(135deg, #0575E6 0%, #00F260 100%)",
+  'cosmic': "linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)"
 };
 
 export default function App() {
@@ -42,7 +44,7 @@ export default function App() {
   const [theme, setTheme] = useState('light');
   const [wallpaper, setWallpaper] = useState('clear-lake');
   const [blurAmount, setBlurAmount] = useState(25);
-  const [dockMagnify, setDockMagnify] = useState(true);
+  const [dockMagnify, setDockMagnify] = useState(false);
   const [bouncingAppId, setBouncingAppId] = useState(null);
   const [showWidgets, setShowWidgets] = useState(true);
 
@@ -101,9 +103,10 @@ export default function App() {
   // Time
   const [timeStr, setTimeStr] = useState('');
 
-  // Menu / Control Center / Spotlight states
+  // Menu / Control Center / Spotlight / Context Menu states
   const [activeMenuDropdown, setActiveMenuDropdown] = useState(null);
   const [showLaunchpad, setShowLaunchpad] = useState(false);
+  const [launchpadSearch, setLaunchpadSearch] = useState('');
   const [showSpotlight, setShowSpotlight] = useState(false);
   const [spotlightQuery, setSpotlightQuery] = useState('');
   const [brightness, setBrightness] = useState(85);
@@ -112,6 +115,49 @@ export default function App() {
   const [bluetoothEnabled, setBluetoothEnabled] = useState(true);
   const [airdropEnabled, setAirdropEnabled] = useState(true);
   const [dndEnabled, setDndEnabled] = useState(false);
+  const [contextMenu, setContextMenu] = useState(null);
+
+  // Dynamic Desktop Items matching user's screen
+  const [desktopItems, setDesktopItems] = useState([
+    { id: 'dev_yut', name: 'Dev_Yut_Student', type: 'folder', app: 'finder' },
+    { id: 'golden_gate', name: 'Golden Gate 27 ☁️', type: 'folder', app: 'finder' },
+    { id: 'screenshot_img', name: 'Screenshot 2026-07-20 at 14.02.45', type: 'file', app: 'photos' }
+  ]);
+
+  // Web Audio UI Sound Generator
+  const playSystemSound = useCallback((type = 'click') => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'click') {
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        gain.gain.setValueAtTime(0.04 * (volume / 100), ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } else if (type === 'unlock') {
+        osc.frequency.setValueAtTime(440, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.06 * (volume / 100), ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      } else if (type === 'launch') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.05 * (volume / 100), ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+      }
+    } catch (e) {}
+  }, [volume]);
 
   // Todos for widget
   const [todos, setTodos] = useState([
@@ -122,7 +168,7 @@ export default function App() {
 
   // Window states
   const [windows, setWindows] = useState({
-    finder: { title: 'Finder', isOpen: true, isMinimized: false, isMaximized: false, zIndex: 10 },
+    finder: { title: 'Finder', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
     safari: { title: 'Safari', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
     terminal: { title: 'Terminal', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
     notes: { title: 'Notes', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
@@ -146,26 +192,22 @@ export default function App() {
     reminders: { title: 'Reminders', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 }
   });
 
-  const [topWindowId, setTopWindowId] = useState('finder');
+  const [topWindowId, setTopWindowId] = useState(null);
   const [maxZIndex, setMaxZIndex] = useState(10);
 
-  // Update time
+  // Clock state
   useEffect(() => {
-    const update = () => {
-      const d = new Date();
-      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const h = d.getHours();
-      const m = d.getMinutes().toString().padStart(2, '0');
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      setTimeStr(`${days[d.getDay()]} ${months[d.getMonth()]} ${d.getDate()}  ${h % 12 || 12}:${m} ${ampm}`);
+    const updateTime = () => {
+      const now = new Date();
+      const options = { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+      setTimeStr(now.toLocaleDateString('en-US', options).replace(',', ''));
     };
-    update();
-    const id = setInterval(update, 10000);
-    return () => clearInterval(id);
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
   }, []);
 
-  // Apply theme to html
+  // Theme attribute
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
@@ -237,13 +279,15 @@ export default function App() {
   }, [focusWindow]);
 
   const launchApp = useCallback((id) => {
-    if (!windows[id]?.isOpen) {
-      setBouncingAppId(id);
-      setTimeout(() => {
-        setBouncingAppId(null);
-      }, 1000);
+    if (windows[id]) {
+      if (!windows[id]?.isOpen) {
+        setBouncingAppId(id);
+        setTimeout(() => {
+          setBouncingAppId(null);
+        }, 1000);
+      }
+      focusWindow(id);
     }
-    focusWindow(id);
   }, [focusWindow, windows]);
 
   const handleTodoToggle = (id) => {
@@ -261,248 +305,116 @@ export default function App() {
     return ['File', 'Edit', 'View', 'Go', 'Window', 'Help'];
   };
 
-  // ── Dock App Definitions ──
+  // ── Dock App Definitions Matching User Screenshot ──
   const dockApps = [
     { id: 'finder', name: 'Finder', badge: 0, bg: 'transparent', icon: (
+      <img src="https://cdn.jim-nielsen.com/macos/1024/finder-2025-11-13.png?rf=1024" alt="Finder" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    )},
+    { id: 'safari', name: 'Safari', badge: 0, bg: 'transparent', icon: (
+      <img src="https://cdn.jim-nielsen.com/macos/1024/safari-2025-11-14.png?rf=1024" alt="Safari" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    )},
+    { id: 'antigravity', name: 'Antigravity', badge: 0, bg: 'transparent', icon: (
       <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
+        <rect width="120" height="120" rx="28" fill="#09090B"/>
+        <path d="M30 90 L60 26 L90 90 M42 66 L78 66" stroke="url(#arcG)" strokeWidth="10" strokeLinecap="round" fill="none"/>
         <defs>
-          <linearGradient id="finderL" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#7CD0FF" />
-            <stop offset="100%" stopColor="#3093FF" />
+          <linearGradient id="arcG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#00C6FF"/><stop offset="100%" stopColor="#0072E3"/>
           </linearGradient>
-          <linearGradient id="finderR" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2586FF" />
-            <stop offset="100%" stopColor="#0052C8" />
-          </linearGradient>
-          <filter id="finderShadow" x="-10%" y="-10%" width="120%" height="120%">
-            <feDropShadow dx="0" dy="3" stdDeviation="2" floodOpacity="0.25"/>
-          </filter>
         </defs>
-        <rect width="120" height="120" fill="url(#finderR)"/>
-        <rect width="60" height="120" fill="url(#finderL)"/>
-        <path d="M60 32C60 32 75 42 82 42C89 42 100 32 100 32" stroke="white" strokeWidth="6.5" strokeLinecap="round" fill="none" filter="url(#finderShadow)"/>
-        <path d="M20 32C20 32 35 42 42 42C49 42 60 32 60 32" stroke="#003585" strokeWidth="6.5" strokeLinecap="round" fill="none"/>
-        <line x1="60" y1="36" x2="60" y2="78" stroke="#003585" strokeWidth="7" strokeLinecap="round"/>
-        <path d="M36 82C36 82 48 94 60 94C72 94 84 82 84 82" stroke="white" strokeWidth="7" strokeLinecap="round" fill="none" filter="url(#finderShadow)"/>
-        <circle cx="38" cy="58" r="7.5" fill="#003585" />
-        <circle cx="82" cy="58" r="7.5" fill="white" filter="url(#finderShadow)" />
+      </svg>
+    )},
+    { id: 'pycharm', name: 'PyCharm', badge: 0, bg: 'transparent', icon: (
+      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
+        <rect width="120" height="120" rx="28" fill="#121212"/>
+        <rect x="16" y="16" width="88" height="88" rx="16" fill="url(#pcG)"/>
+        <text x="28" y="78" fill="white" fontSize="42" fontWeight="900" fontFamily="sans-serif">PC</text>
+        <rect x="68" y="76" width="24" height="8" fill="#30D158"/>
+        <defs>
+          <linearGradient id="pcG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#212121"/><stop offset="100%" stopColor="#000000"/>
+          </linearGradient>
+        </defs>
       </svg>
     )},
     { id: 'launchpad', name: 'Launchpad', badge: 0, bg: 'transparent', icon: (
       <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="lpBg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#2D3748" />
-            <stop offset="100%" stopColor="#1A202C" />
-          </linearGradient>
-        </defs>
-        <rect width="120" height="120" fill="url(#lpBg)"/>
-        {[0,1,2,3].map(r => [0,1,2,3].map(c => (
-          <circle key={`${r}${c}`} cx={25.5+c*23} cy={25.5+r*23} r={7.5} fill={
-            ['#FF5F57','#FEBC2E','#28C840','#3B82F6','#A855F7','#EC4899','#F97316','#10B981',
-             '#06B6D4','#6366F1','#D946EF','#F43F5E','#84CC16','#EAB308','#14B8A6','#8B5CF6'][r*4+c]
-          } filter="drop-shadow(0 1.5px 3px rgba(0,0,0,0.3))"/>
+        <rect width="120" height="120" rx="28" fill="#E2E8F0"/>
+        {[0,1,2].map(r => [0,1,2].map(c => (
+          <circle key={`${r}${c}`} cx={32+c*28} cy={32+r*28} r={9} fill={
+            ['#FF5F57','#FEBC2E','#28C840','#3B82F6','#A855F7','#EC4899','#F97316','#10B981','#06B6D4'][r*3+c]
+          }/>
         )))}
       </svg>
     )},
-    'divider',
-    { id: 'safari', name: 'Safari', badge: 0, bg: 'transparent', icon: (
+    { id: 'gemini', name: 'Google Gemini', badge: 0, bg: 'transparent', icon: (
       <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
+        <rect width="120" height="120" rx="28" fill="#FFFFFF"/>
+        <path d="M60 18 Q60 60 102 60 Q60 60 60 102 Q60 60 18 60 Q60 60 60 18 Z" fill="url(#geminiG)"/>
         <defs>
-          <radialGradient id="safariGlobe" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#25A0FF" />
-            <stop offset="100%" stopColor="#0072E3" />
-          </radialGradient>
-          <filter id="safariShadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodOpacity="0.25"/>
-          </filter>
-        </defs>
-        <rect width="120" height="120" fill="#FFFFFF"/>
-        <circle cx="60" cy="60" r="46" fill="url(#safariGlobe)" filter="url(#safariShadow)"/>
-        <circle cx="60" cy="60" r="41" fill="none" stroke="white" strokeWidth="2.5" opacity="0.6"/>
-        {[0,30,60,90,120,150,180,210,240,270,300,330].map((a,i) => {
-          const r1 = 41, r2 = i%3===0 ? 34 : 37;
-          const rad = a * Math.PI/180;
-          return <line key={a} x1={60+Math.sin(rad)*r2} y1={60-Math.cos(rad)*r2} x2={60+Math.sin(rad)*r1} y2={60-Math.cos(rad)*r1} stroke="white" strokeWidth={i%3===0?"2.5":"1.2"} opacity="0.8"/>;
-        })}
-        <polygon points="60,24 69,60 60,96 51,60" fill="white" opacity="0.95" filter="url(#safariShadow)"/>
-        <polygon points="60,24 69,60 96,51" fill="#FF3B30"/>
-        <polygon points="60,96 51,60 24,69" fill="#FF3B30"/>
-        <circle cx="60" cy="60" r="3.5" fill="#FFFFFF" filter="url(#safariShadow)"/>
-      </svg>
-    )},
-    { id: 'messages', name: 'Messages', badge: 2, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="msgBg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#4ADE80" />
-            <stop offset="100%" stopColor="#16A34A" />
+          <linearGradient id="geminiG" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1A73E8"/><stop offset="33%" stopColor="#8AB4F8"/><stop offset="66%" stopColor="#EA4335"/><stop offset="100%" stopColor="#FBBC04"/>
           </linearGradient>
         </defs>
-        <rect width="120" height="120" fill="url(#msgBg)"/>
-        <path d="M60 26C35.5 26 16 41.5 16 60.5C16 71.2 21.6 80.8 30.5 87.2L25 101.5L46 95C50.5 96.2 55.2 96.8 60 96.8C84.5 96.8 104 81.3 104 62.3C104 43.3 84.5 26 60 26Z" fill="white" filter="drop-shadow(0 2.5px 5px rgba(0,0,0,0.18))"/>
-      </svg>
-    )},
-    { id: 'mail', name: 'Mail', badge: 4, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="mailBg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2563EB" />
-            <stop offset="100%" stopColor="#1E3A8A" />
-          </linearGradient>
-        </defs>
-        <rect width="120" height="120" fill="url(#mailBg)"/>
-        <g filter="drop-shadow(0 3px 6px rgba(0,0,0,0.22))">
-          <rect x="18" y="32" width="84" height="56" rx="8" fill="white"/>
-          <path d="M18 36L60 66L102 36" stroke="#2563EB" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        </g>
-      </svg>
-    )},
-    { id: 'maps', name: 'Maps', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="mapsWater" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#7DD3FC" />
-            <stop offset="100%" stopColor="#38BDF8" />
-          </linearGradient>
-        </defs>
-        <rect width="120" height="120" fill="url(#mapsWater)"/>
-        <path d="M15 32L45 22L75 38L105 24V92L75 102L45 88L15 98V32Z" fill="#4ADE80" stroke="white" strokeWidth="3" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.15))"/>
-        <path d="M45 22V88" stroke="white" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.6"/>
-        <path d="M75 38V102" stroke="white" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.6"/>
-        <g filter="drop-shadow(0 3px 6px rgba(0,0,0,0.3))">
-          <circle cx="60" cy="55" r="13" fill="#EF4444"/>
-          <circle cx="60" cy="55" r="5.5" fill="white"/>
-        </g>
-      </svg>
-    )},
-    { id: 'photos', name: 'Photos', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <rect width="120" height="120" fill="#FFFFFF"/>
-        <g style={{ mixBlendMode: 'multiply' }} filter="drop-shadow(0 1px 3px rgba(0,0,0,0.12))">
-          <circle cx="60" cy="38" r="22" fill="#FF9500" opacity="0.8"/>
-          <circle cx="82" cy="60" r="22" fill="#FF2D55" opacity="0.8"/>
-          <circle cx="60" cy="82" r="22" fill="#5AC8FA" opacity="0.8"/>
-          <circle cx="38" cy="60" r="22" fill="#4CD964" opacity="0.8"/>
-          <circle cx="72" cy="48" r="22" fill="#FFCC00" opacity="0.65"/>
-          <circle cx="72" cy="72" r="22" fill="#AF52DE" opacity="0.65"/>
-          <circle cx="48" cy="72" r="22" fill="#30B0C7" opacity="0.65"/>
-          <circle cx="48" cy="48" r="22" fill="#FF9F0A" opacity="0.65"/>
-        </g>
-      </svg>
-    )},
-    { id: 'facetime', name: 'FaceTime', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="ftBg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#4ADE80" />
-            <stop offset="100%" stopColor="#16A34A" />
-          </linearGradient>
-        </defs>
-        <rect width="120" height="120" fill="url(#ftBg)"/>
-        <g fill="white" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.16))">
-          <rect x="20" y="36" width="54" height="48" rx="10"/>
-          <path d="M78 46L100 32V88L78 74V46Z" />
-        </g>
-      </svg>
-    )},
-    { id: 'calendar', name: 'Calendar', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="calRed" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#EF4444" />
-            <stop offset="100%" stopColor="#DC2626" />
-          </linearGradient>
-        </defs>
-        <rect width="120" height="120" fill="#FFFFFF"/>
-        <rect x="0" y="0" width="120" height="34" fill="url(#calRed)"/>
-        <text x="60" y="24" textAnchor="middle" fill="white" fontSize="15" fontWeight="800" letterSpacing="0.8">JULY</text>
-        <text x="60" y="88" textAnchor="middle" fill="#1F2937" fontSize="56" fontWeight="100">18</text>
-      </svg>
-    )},
-    'divider',
-    { id: 'notes', name: 'Notes', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="notesBg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FDE047" />
-            <stop offset="100%" stopColor="#EAB308" />
-          </linearGradient>
-        </defs>
-        <rect width="120" height="120" fill="url(#notesBg)"/>
-        <rect x="18" y="20" width="84" height="85" rx="8" fill="white" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.15))"/>
-        <line x1="28" y1="42" x2="92" y2="42" stroke="#EAB308" strokeWidth="3" strokeLinecap="round"/>
-        <line x1="28" y1="56" x2="92" y2="56" stroke="#F3F4F6" strokeWidth="2.5"/>
-        <line x1="28" y1="70" x2="92" y2="70" stroke="#F3F4F6" strokeWidth="2.5"/>
-        <line x1="28" y1="84" x2="72" y2="84" stroke="#F3F4F6" strokeWidth="2.5"/>
       </svg>
     )},
     { id: 'music', name: 'Music', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="musicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#EC4899"/><stop offset="100%" stopColor="#8B5CF6"/>
-          </linearGradient>
-        </defs>
-        <rect width="120" height="120" fill="url(#musicGrad)"/>
-        <g fill="white" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.2))">
-          <circle cx="45" cy="78" r="14" fill="none" stroke="white" strokeWidth="4.5"/>
-          <line x1="59.5" y1="78" x2="59.5" y2="32" stroke="white" strokeWidth="5.5" strokeLinecap="round"/>
-          <path d="M59.5 32C59.5 32 75 27 82 30C89 33 85 42 80 40" stroke="white" strokeWidth="5.5" strokeLinecap="round" fill="none"/>
-        </g>
-      </svg>
+      <img src="https://cdn.jim-nielsen.com/macos/1024/music-2025-11-13.png?rf=1024" alt="Music" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
-    { id: 'appstore', name: 'App Store', badge: 4, bg: 'transparent', icon: (
+    { id: 'appstore', name: 'App Store', badge: 0, bg: 'transparent', icon: (
+      <img src="https://cdn.jim-nielsen.com/macos/1024/apple-developer-2026-05-18.png?rf=1024" alt="App Store" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    )},
+    { id: 'settings', name: 'System Settings', badge: 0, bg: 'transparent', icon: (
+      <img src="https://cdn.jim-nielsen.com/macos/1024/system-settings-2025-11-14.png?rf=1024" alt="System Settings" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    )},
+    { id: 'iphone', name: 'iPhone Mirroring', badge: 0, bg: 'transparent', icon: (
       <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
+        <rect width="120" height="120" rx="28" fill="url(#iphG)"/>
+        <rect x="42" y="24" width="36" height="72" rx="10" fill="none" stroke="white" strokeWidth="5"/>
+        <line x1="52" y1="32" x2="68" y2="32" stroke="white" strokeWidth="4" strokeLinecap="round"/>
         <defs>
-          <linearGradient id="asBg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3B82F6" />
-            <stop offset="100%" stopColor="#1D4ED8" />
+          <linearGradient id="iphG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#A855F7"/><stop offset="100%" stopColor="#6366F1"/>
           </linearGradient>
         </defs>
-        <rect width="120" height="120" fill="url(#asBg)"/>
-        <g stroke="white" strokeWidth="8.5" strokeLinecap="round" strokeLinejoin="round" fill="none" filter="drop-shadow(0 3px 6px rgba(0,0,0,0.22))">
-          <path d="M42 88L60 40L78 88" />
-          <line x1="46" y1="74" x2="74" y2="74" />
-          <line x1="28" y1="88" x2="48" y2="88" />
-          <line x1="72" y1="88" x2="92" y2="88" />
-        </g>
       </svg>
     )},
     'divider',
-    { id: 'settings', name: 'System Settings', badge: 0, bg: 'transparent', icon: (
+    { id: 'edge', name: 'Microsoft Edge', badge: 0, bg: 'transparent', icon: (
       <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
+        <rect width="120" height="120" rx="28" fill="#FFFFFF"/>
+        <path d="M26 72 C26 40 52 26 78 34 C60 38 52 52 68 60 C84 68 96 52 92 78 C84 98 48 98 30 84 Z" fill="url(#edgeG)"/>
         <defs>
-          <linearGradient id="setBg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#D1D5DB" />
-            <stop offset="100%" stopColor="#9CA3AF" />
+          <linearGradient id="edgeG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#0078D4"/><stop offset="50%" stopColor="#00BCF2"/><stop offset="100%" stopColor="#00E676"/>
           </linearGradient>
         </defs>
-        <rect width="120" height="120" fill="url(#setBg)"/>
-        <g stroke="white" strokeWidth="7" strokeLinecap="round" fill="none" filter="drop-shadow(0 2.5px 5px rgba(0,0,0,0.18))">
-          <circle cx="60" cy="60" r="23" strokeWidth="5.5"/>
-          {[0,45,90,135,180,225,270,315].map(a => {
-            const rad = a*Math.PI/180;
-            return <line key={a} x1={60+Math.sin(rad)*24} y1={60-Math.cos(rad)*24} x2={60+Math.sin(rad)*32} y2={60-Math.cos(rad)*32} />;
-          })}
-        </g>
-        <circle cx="60" cy="60" r="10" fill="white"/>
       </svg>
     )},
-    { id: 'terminal', name: 'Terminal', badge: 0, bg: 'transparent', icon: (
+    { id: 'telegram', name: 'Telegram', badge: 0, bg: 'transparent', icon: (
+      <img src="https://cdn.jim-nielsen.com/macos/1024/telegram-2021-05-18.png?rf=1024" alt="Telegram" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    )},
+    { id: 'chrome', name: 'Google Chrome', badge: 0, bg: 'transparent', icon: (
       <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <defs>
-          <linearGradient id="termBg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1F2937" />
-            <stop offset="100%" stopColor="#111827" />
-          </linearGradient>
-        </defs>
-        <rect width="120" height="120" fill="url(#termBg)"/>
-        <g filter="drop-shadow(0 2px 4px rgba(0,0,0,0.22))">
-          <path d="M30 40L55 60L30 80" stroke="#10B981" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-          <line x1="60" y1="80" x2="90" y2="80" stroke="#10B981" strokeWidth="9" strokeLinecap="round"/>
-        </g>
+        <rect width="120" height="120" rx="28" fill="#FFFFFF"/>
+        <circle cx="60" cy="60" r="40" fill="#4285F4"/>
+        <circle cx="60" cy="60" r="18" fill="white"/>
+        <circle cx="60" cy="60" r="14" fill="#4285F4"/>
+        <path d="M60 20 L94 40 L60 60 Z" fill="#EA4335"/>
+        <path d="M94 40 L76 92 L60 60 Z" fill="#FBBC05"/>
+        <path d="M76 92 L26 72 L60 60 Z" fill="#34A853"/>
       </svg>
+    )},
+    { id: 'preview_win', name: 'Active Window', badge: 0, bg: 'transparent', icon: (
+      <div style={{ width: '100%', height: '100%', borderRadius: '14px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.7)', boxShadow: '0 3px 10px rgba(0,0,0,0.3)', position: 'relative', background: '#0f172a' }}>
+        <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=300&q=80" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ position: 'absolute', bottom: '3px', right: '3px', width: '16px', height: '16px', borderRadius: '50%', background: 'white', display: 'grid', placeItems: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
+          <svg width="10" height="10" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#4285F4"/></svg>
+        </div>
+      </div>
+    )},
+    { id: 'trash', name: 'Trash', badge: 0, bg: 'transparent', icon: (
+      <img src="https://cdn.jim-nielsen.com/macos/1024/trash-full-2021-05-18.png?rf=1024" alt="Trash" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )}
   ];
 
@@ -547,14 +459,23 @@ export default function App() {
     }
   };
 
-  // Lock screen handler
   const handleLockScreen = () => {
     setLocked(true);
   };
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-      {/* Background Wallpaper */}
+    <div
+      style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}
+      onClick={() => { setActiveMenuDropdown(null); setContextMenu(null); }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        setActiveMenuDropdown(null);
+        setContextMenu({
+          x: Math.min(e.clientX, window.innerWidth - 210),
+          y: Math.min(e.clientY, window.innerHeight - 230)
+        });
+      }}
+    >
       <div
         className="wallpaper-container"
         style={{
@@ -567,10 +488,17 @@ export default function App() {
         }}
       />
 
-      {/* ══ Menu Bar ══ */}
+      <div style={{
+        position: 'fixed', inset: 0,
+        background: 'black',
+        opacity: Math.max(0, (100 - brightness) * 0.0065),
+        pointerEvents: 'none',
+        zIndex: 9999,
+        transition: 'opacity 0.1s linear'
+      }} />
+
       <div className="menu-bar">
         <div className="menu-bar-left">
-          {/* Apple Menu */}
           <div style={{ position: 'relative' }}>
             <span
               className="menu-item"
@@ -613,7 +541,6 @@ export default function App() {
 
           <span className="menu-item" style={{ fontWeight: 700 }}>{activeAppName}</span>
 
-          {/* Dynamic App Menus */}
           {getMenuItems().map(item => {
             const itemLower = item.toLowerCase();
             return (
@@ -655,7 +582,6 @@ export default function App() {
         </div>
 
         <div className="menu-bar-right" style={{ gap: '6px' }}>
-          {/* Wi-Fi icon */}
           <div style={{ position: 'relative' }}>
             <span
               className="menu-item"
@@ -703,7 +629,6 @@ export default function App() {
             )}
           </div>
 
-          {/* Display icon */}
           <div style={{ position: 'relative' }}>
             <span
               className="menu-item"
@@ -728,7 +653,6 @@ export default function App() {
             )}
           </div>
 
-          {/* Siri / colored circle */}
           <span className="menu-item" style={{ padding: '2px 4px' }}>
             <div style={{
               width: 14, height: 14, borderRadius: '50%',
@@ -737,7 +661,6 @@ export default function App() {
             }} />
           </span>
 
-          {/* Search / Spotlight */}
           <span
             className="menu-item"
             style={{ padding: '2px 4px' }}
@@ -749,7 +672,6 @@ export default function App() {
             </svg>
           </span>
 
-          {/* Control Center */}
           <div style={{ position: 'relative' }}>
             <span
               className="menu-item"
@@ -766,76 +688,181 @@ export default function App() {
             {activeMenuDropdown === 'cc' && (
               <div className="glass-panel" style={{
                 position: 'absolute', top: '28px', right: '0', zIndex: 1000,
-                width: '300px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px'
+                width: '320px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px'
               }} onClick={e => e.stopPropagation()}>
+                {/* Connectivity & Focus Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '8px' }}>
-                  <div style={{ background: 'var(--control-bg)', border: '1px solid var(--separator)', padding: '10px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => setWifiEnabled(!wifiEnabled)}>
+                  {/* Left Column: Wi-Fi, Bluetooth, AirDrop */}
+                  <div className="cc-tile" style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '10px 12px' }}>
+                    {/* Wi-Fi */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => setWifiEnabled(!wifiEnabled)}>
                       <div style={{
-                        width: '24px', height: '24px', borderRadius: '50%',
-                        background: wifiEnabled ? 'var(--accent)' : 'rgba(0,0,0,.08)',
-                        display: 'grid', placeItems: 'center', color: wifiEnabled ? 'white' : 'var(--label-2)',
-                        fontSize: '12px'
-                      }}>📶</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
-                        <span style={{ fontWeight: 600 }}>Wi-Fi</span>
-                        <span style={{ fontSize: '9px', color: 'var(--label-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80px' }}>{wifiEnabled ? 'HomeNet_5G' : 'Off'}</span>
+                        width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
+                        background: wifiEnabled ? 'linear-gradient(135deg, #007AFF, #00C6FF)' : 'rgba(120, 120, 128, 0.2)',
+                        color: 'white', display: 'grid', placeItems: 'center',
+                        boxShadow: wifiEnabled ? '0 2px 8px rgba(0, 122, 255, 0.4)' : 'none',
+                        transition: 'all 0.2s ease'
+                      }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/>
+                        </svg>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--label)', lineHeight: 1.2 }}>Wi-Fi</span>
+                        <span style={{ fontSize: '10px', color: 'var(--label-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {wifiEnabled ? 'HomeNet_5G' : 'Off'}
+                        </span>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => setBluetoothEnabled(!bluetoothEnabled)}>
+
+                    {/* Bluetooth */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => setBluetoothEnabled(!bluetoothEnabled)}>
                       <div style={{
-                        width: '24px', height: '24px', borderRadius: '50%',
-                        background: bluetoothEnabled ? 'var(--accent)' : 'rgba(0,0,0,.08)',
-                        display: 'grid', placeItems: 'center', color: bluetoothEnabled ? 'white' : 'var(--label-2)',
-                        fontSize: '12px'
-                      }}>ᛒ</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
-                        <span style={{ fontWeight: 600 }}>Bluetooth</span>
-                        <span style={{ fontSize: '9px', color: 'var(--label-2)' }}>{bluetoothEnabled ? 'On' : 'Off'}</span>
+                        width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
+                        background: bluetoothEnabled ? 'linear-gradient(135deg, #007AFF, #00C6FF)' : 'rgba(120, 120, 128, 0.2)',
+                        color: 'white', display: 'grid', placeItems: 'center',
+                        boxShadow: bluetoothEnabled ? '0 2px 8px rgba(0, 122, 255, 0.4)' : 'none',
+                        transition: 'all 0.2s ease'
+                      }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <path d="m7 7 10 10-5 5V2l5 5L7 17"/>
+                        </svg>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--label)', lineHeight: 1.2 }}>Bluetooth</span>
+                        <span style={{ fontSize: '10px', color: 'var(--label-2)' }}>{bluetoothEnabled ? 'On' : 'Off'}</span>
+                      </div>
+                    </div>
+
+                    {/* AirDrop */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => setAirdropEnabled(!airdropEnabled)}>
+                      <div style={{
+                        width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
+                        background: airdropEnabled ? 'linear-gradient(135deg, #007AFF, #00C6FF)' : 'rgba(120, 120, 128, 0.2)',
+                        color: 'white', display: 'grid', placeItems: 'center',
+                        boxShadow: airdropEnabled ? '0 2px 8px rgba(0, 122, 255, 0.4)' : 'none',
+                        transition: 'all 0.2s ease'
+                      }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <circle cx="12" cy="12" r="3"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49"/>
+                        </svg>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--label)', lineHeight: 1.2 }}>AirDrop</span>
+                        <span style={{ fontSize: '10px', color: 'var(--label-2)' }}>{airdropEnabled ? 'Contacts Only' : 'Off'}</span>
                       </div>
                     </div>
                   </div>
-                  <div style={{ background: 'var(--control-bg)', border: '1px solid var(--separator)', padding: '10px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px', justifyContent: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => setDndEnabled(!dndEnabled)}>
+
+                  {/* Right Column: Focus DND & Stage Manager */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {/* Focus Card */}
+                    <div className="cc-tile" style={{
+                      flex: 1, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
+                      background: dndEnabled ? 'linear-gradient(135deg, rgba(175,82,222,0.85), rgba(147,51,234,0.85))' : undefined,
+                      color: dndEnabled ? 'white' : 'var(--label)'
+                    }} onClick={() => setDndEnabled(!dndEnabled)}>
                       <div style={{
-                        width: '24px', height: '24px', borderRadius: '50%',
-                        background: dndEnabled ? '#AF52DE' : 'rgba(0,0,0,.08)',
-                        display: 'grid', placeItems: 'center', color: dndEnabled ? 'white' : 'var(--label-2)',
-                        fontSize: '12px'
-                      }}>🌙</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', fontSize: '11px' }}>
-                        <span style={{ fontWeight: 600 }}>DND</span>
-                        <span style={{ fontSize: '9px', color: 'var(--label-2)' }}>{dndEnabled ? 'On' : 'Off'}</span>
+                        width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
+                        background: dndEnabled ? 'rgba(255,255,255,0.25)' : 'rgba(120, 120, 128, 0.2)',
+                        display: 'grid', placeItems: 'center', color: dndEnabled ? 'white' : 'var(--label)'
+                      }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 600, lineHeight: 1.2 }}>Focus</span>
+                        <span style={{ fontSize: '10px', opacity: 0.8 }}>{dndEnabled ? 'DND' : 'Off'}</span>
+                      </div>
+                    </div>
+
+                    {/* Stage Manager Card */}
+                    <div className="cc-tile" style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <div style={{
+                        width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
+                        background: 'rgba(120, 120, 128, 0.2)', display: 'grid', placeItems: 'center', color: 'var(--label)'
+                      }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/>
+                        </svg>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: '11px', fontWeight: 600, lineHeight: 1.2 }}>Stage Mgr</span>
+                        <span style={{ fontSize: '9px', color: 'var(--label-2)' }}>On</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div style={{ background: 'var(--control-bg)', border: '1px solid var(--separator)', padding: '10px 12px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {/* Display & Sound Sliders */}
+                <div className="cc-tile" style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '12px' }}>
+                  {/* Display Brightness */}
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, marginBottom: '3px' }}>
-                      <span>Display</span>
-                      <span>{brightness}%</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', fontWeight: 600, marginBottom: '6px', color: 'var(--label)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        Display
+                      </span>
+                      <span style={{ fontSize: '10px', color: 'var(--label-2)' }}>{brightness}%</span>
                     </div>
                     <input type="range" min="10" max="100" value={brightness}
                       onChange={e => setBrightness(Number(e.target.value))}
-                      style={{ width: '100%', accentColor: 'var(--accent)', cursor: 'pointer' }} />
+                      style={{
+                        width: '100%', height: '8px', borderRadius: '4px', cursor: 'pointer',
+                        accentColor: 'var(--accent)'
+                      }} />
                   </div>
+
+                  {/* Sound Volume */}
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, marginBottom: '3px' }}>
-                      <span>Sound</span>
-                      <span>{volume}%</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', fontWeight: 600, marginBottom: '6px', color: 'var(--label)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                        </svg>
+                        Sound
+                      </span>
+                      <span style={{ fontSize: '10px', color: 'var(--label-2)' }}>{volume}%</span>
                     </div>
                     <input type="range" min="0" max="100" value={volume}
                       onChange={e => setVolume(Number(e.target.value))}
-                      style={{ width: '100%', accentColor: 'var(--accent)', cursor: 'pointer' }} />
+                      style={{
+                        width: '100%', height: '8px', borderRadius: '4px', cursor: 'pointer',
+                        accentColor: 'var(--accent)'
+                      }} />
+                  </div>
+                </div>
+
+                {/* Now Playing Widget */}
+                <div className="cc-tile" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{
+                      width: '36px', height: '36px', borderRadius: '8px',
+                      background: 'linear-gradient(135deg, #FA2D55, #9333EA)',
+                      display: 'grid', placeItems: 'center', fontSize: '18px',
+                      boxShadow: '0 2px 8px rgba(250, 45, 85, 0.3)'
+                    }}>
+                      🌃
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--label)' }}>Midnight City</div>
+                      <div style={{ fontSize: '10px', color: 'var(--label-2)' }}>M83 — Hurry Up...</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <button onClick={() => launchApp('music')} style={{
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      fontSize: '16px', color: 'var(--accent)'
+                    }}>▶</button>
                   </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Date/Time */}
           <span className="menu-item" style={{
             fontWeight: 500, fontSize: '13px',
             textShadow: '0 1px 2px rgba(0,0,0,.3), 0 0 8px rgba(0,0,0,.15)'
@@ -845,135 +872,101 @@ export default function App() {
         </div>
       </div>
 
-      {/* ══ Widgets Panel ══ */}
-      {showWidgets && (
-        <div className="widgets-panel">
-          {/* Calendar Widget */}
-          <div className="widget-card" style={{ display: 'flex', gap: '12px', minHeight: '130px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
-              <div style={{ fontSize: '11px', fontWeight: 800, color: '#FF3B30', textTransform: 'uppercase' }}>July 2026</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', fontSize: '9px', textAlign: 'center', color: 'var(--label-2)' }}>
-                {['S','M','T','W','T','F','S'].map((d,i) => <span key={i} style={{ fontWeight: 700, fontSize: '8px' }}>{d}</span>)}
-                {Array.from({ length: 31 }).map((_, i) => {
-                  const day = i + 1;
-                  const isToday = day === 18;
-                  return (
-                    <span key={i} style={{
-                      fontWeight: isToday ? '700' : '400',
-                      color: isToday ? 'white' : 'var(--label)',
-                      background: isToday ? '#FF3B30' : 'transparent',
-                      borderRadius: '50%',
-                      width: '14px', height: '14px',
-                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                      gridColumnStart: day === 1 ? 4 : 'auto',
-                      fontSize: '9px'
-                    }}>
-                      {day}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-            <div style={{ width: '140px', borderLeft: '1px solid var(--separator)', paddingLeft: '10px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '11px' }}>
-              <div>
-                <div style={{ fontWeight: 600 }}>1:1 with Maya</div>
-                <div style={{ fontSize: '10px', color: 'var(--label-2)' }}>2:00 PM</div>
-              </div>
-              <div>
-                <div style={{ fontWeight: 600 }}>Sprint planning</div>
-                <div style={{ fontSize: '10px', color: 'var(--label-2)' }}>9:30 AM</div>
-              </div>
-            </div>
+      {contextMenu && (
+        <div
+          className="apple-menu-dropdown glass-menu"
+          style={{
+            position: 'absolute', top: `${contextMenu.y}px`, left: `${contextMenu.x}px`,
+            zIndex: 10000, minWidth: '190px', padding: '6px'
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="menu-dropdown-item" onClick={() => {
+            const name = `New Folder ${desktopItems.length + 1}`;
+            setDesktopItems(prev => [...prev, { id: `folder-${Date.now()}`, name, type: 'folder', app: 'finder' }]);
+            setContextMenu(null);
+          }}>
+            📁 New Folder
           </div>
-
-          {/* Weather + Today row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            {/* Weather */}
-            <div className="widget-card" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--label-2)' }}>Cupertino</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" fill="#8E8E93" opacity="0.6"/>
-                </svg>
-                <span style={{ fontSize: '36px', fontWeight: 200, lineHeight: 1 }}>57°</span>
-              </div>
-              <div style={{ fontSize: '11px', color: 'var(--label-2)' }}>Cloudy</div>
-              <div style={{ fontSize: '10px', color: 'var(--label-3)' }}>H:79° L:56°</div>
-            </div>
-
-            {/* Today / Reminders */}
-            <div className="widget-card" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 700 }}>Today</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                {todos.map(t => (
-                  <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', cursor: 'pointer' }} onClick={() => handleTodoToggle(t.id)}>
-                    <div style={{
-                      width: '12px', height: '12px', borderRadius: '50%',
-                      border: `1.5px solid ${t.done ? 'var(--accent)' : 'var(--label-3)'}`,
-                      background: t.done ? 'var(--accent)' : 'transparent',
-                      flexShrink: 0
-                    }} />
-                    <span style={{ textDecoration: t.done ? 'line-through' : 'none', color: t.done ? 'var(--label-3)' : 'var(--label)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {t.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <span style={{ fontSize: '10px', color: 'var(--accent)', cursor: 'pointer', marginTop: 'auto' }}>3 remaining &gt;</span>
-            </div>
+          <div className="menu-separator" />
+          <div className="menu-dropdown-item" onClick={() => {
+            launchApp('settings');
+            setContextMenu(null);
+          }}>
+            🎨 Change Wallpaper...
           </div>
-
-          {/* Stocks Widget */}
-          <div className="widget-card" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {[
-              { sym: 'AAPL', name: 'Apple Inc.', price: '232.40', pct: '+12.02%', color: '#34C759', path: 'M0,12 L8,10 L16,4 L24,6 L32,1 L40,0' },
-              { sym: 'MSFT', name: 'Microsoft C...', price: '505.80', pct: '+3.52%', color: '#34C759', path: 'M0,14 L8,12 L16,10 L24,5 L32,3 L40,2' },
-              { sym: 'NVDA', name: 'NVIDIA Corp.', price: '168.25', pct: '-6.22%', color: '#FF3B30', path: 'M0,2 L8,5 L16,8 L24,12 L32,14 L40,11' }
-            ].map(s => (
-              <div key={s.sym} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px' }}>
-                <div style={{ minWidth: '55px' }}>
-                  <strong style={{ display: 'block' }}>{s.sym}</strong>
-                  <span style={{ fontSize: '9px', color: 'var(--label-3)' }}>{s.name}</span>
-                </div>
-                <svg width="50" height="16" fill="none" stroke={s.color} strokeWidth="1.5" style={{ flexShrink: 0 }}>
-                  <path d={s.path} />
-                </svg>
-                <div style={{ textAlign: 'right', minWidth: '60px' }}>
-                  <div>{s.price}</div>
-                  <span style={{ fontSize: '9.5px', color: s.color }}>{s.pct}</span>
-                </div>
-              </div>
-            ))}
+          <div className="menu-dropdown-item" onClick={() => {
+            setShowWidgets(prev => !prev);
+            setContextMenu(null);
+          }}>
+            🧩 {showWidgets ? 'Hide Widgets' : 'Show Widgets'}
+          </div>
+          <div className="menu-dropdown-item" onClick={() => {
+            setTheme(prev => prev === 'light' ? 'dark' : 'light');
+            setContextMenu(null);
+          }}>
+            🌓 Toggle Dark Mode
+          </div>
+          <div className="menu-separator" />
+          <div className="menu-dropdown-item" onClick={() => {
+            setLocked(true);
+            setContextMenu(null);
+          }}>
+            🔒 Lock Screen
           </div>
         </div>
       )}
 
-      {/* ══ Desktop Icons ══ */}
+      {showWidgets && (
+        <div className="widgets-panel">
+          {/* Top Row: Clock & Weather Widgets */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            {/* Clock Widget */}
+            <div className="widget-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '110px', background: 'rgba(255, 255, 255, 0.25)', backdropFilter: 'blur(30px)' }}>
+              <div style={{ fontSize: '42px', fontWeight: 200, letterSpacing: '-1px', color: 'white', textShadow: '0 2px 10px rgba(0,0,0,0.3)', fontFamily: 'system-ui, sans-serif' }}>
+                14:06
+              </div>
+            </div>
+
+            {/* Weather Widget */}
+            <div className="widget-card" style={{ display: 'flex', flexDirection: 'column', gap: '4px', height: '110px', background: 'rgba(255, 255, 255, 0.25)', backdropFilter: 'blur(30px)' }}>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: 'white', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Urgut 📍
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '38px', fontWeight: 300, lineHeight: 1, color: 'white' }}>36°</span>
+              </div>
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>Sunny</div>
+              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.75)' }}>H:36° L:26°</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="desktop-icons-grid">
-        <div className="desktop-icon" onDoubleClick={() => launchApp('finder')}>
-          <div className="desktop-icon-img">
-            <svg viewBox="0 0 64 64" width="48" height="48">
-              <path d="M8 4h36l12 12v40a4 4 0 01-4 4H8a4 4 0 01-4-4V8a4 4 0 014-4z" fill="#5AC8FA" opacity="0.9"/>
-              <path d="M44 4l12 12H48a4 4 0 01-4-4V4z" fill="#4AB3E6"/>
-            </svg>
+        {desktopItems.map(item => (
+          <div key={item.id} className="desktop-icon" onDoubleClick={() => { launchApp(item.app || 'finder'); }}>
+            <div className="desktop-icon-img">
+              {item.type === 'folder' ? (
+                <svg viewBox="0 0 64 64" width="48" height="48">
+                  <path d="M8 4h36l12 12v40a4 4 0 01-4 4H8a4 4 0 01-4-4V8a4 4 0 014-4z" fill="#5AC8FA" opacity="0.95"/>
+                  <path d="M44 4l12 12H48a4 4 0 01-4-4V4z" fill="#38BDF8"/>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 64 64" width="48" height="48">
+                  <rect x="8" y="4" width="48" height="56" rx="4" fill="white" opacity="0.95"/>
+                  <text x="16" y="25" fill="#8E8E93" fontSize="8" fontWeight="600">TXT</text>
+                  <line x1="16" y1="32" x2="48" y2="32" stroke="#E5E5EA" strokeWidth="1.5"/>
+                  <line x1="16" y1="40" x2="48" y2="40" stroke="#E5E5EA" strokeWidth="1.5"/>
+                  <line x1="16" y1="48" x2="36" y2="48" stroke="#E5E5EA" strokeWidth="1.5"/>
+                </svg>
+              )}
+            </div>
+            <span className="desktop-icon-name">{item.name}</span>
           </div>
-          <span className="desktop-icon-name">Tahoe Trip</span>
-        </div>
-        <div className="desktop-icon" onDoubleClick={() => launchApp('notes')}>
-          <div className="desktop-icon-img">
-            <svg viewBox="0 0 64 64" width="48" height="48">
-              <rect x="8" y="4" width="48" height="56" rx="4" fill="white" opacity="0.9"/>
-              <text x="16" y="25" fill="#8E8E93" fontSize="8" fontWeight="600">TXT</text>
-              <line x1="16" y1="32" x2="48" y2="32" stroke="#E5E5EA" strokeWidth="1.5"/>
-              <line x1="16" y1="40" x2="48" y2="40" stroke="#E5E5EA" strokeWidth="1.5"/>
-              <line x1="16" y1="48" x2="36" y2="48" stroke="#E5E5EA" strokeWidth="1.5"/>
-            </svg>
-          </div>
-          <span className="desktop-icon-name">Welcome.txt</span>
-        </div>
+        ))}
       </div>
 
-      {/* ══ Windows ══ */}
       <Window
         id="finder" title="Documents"
         isOpen={windows.finder.isOpen} isMinimized={windows.finder.isMinimized}
@@ -1007,28 +1000,46 @@ export default function App() {
         );
       })}
 
-      {/* ══ Launchpad Overlay ══ */}
       {showLaunchpad && (
         <div className="launchpad-overlay" onClick={() => setShowLaunchpad(false)}>
-          {appsList.filter(a => a.id !== 'launchpad').map(app => (
-            <div
-              key={app.id}
-              onClick={(e) => { e.stopPropagation(); setShowLaunchpad(false); launchApp(app.id); }}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-            >
-              <div style={{
-                width: '60px', height: '60px', borderRadius: '14px',
-                overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,.15)'
-              }}>
-                {app.icon}
-              </div>
-              <span style={{ fontSize: '12px', fontWeight: 500, color: 'white', textShadow: '0 1px 3px rgba(0,0,0,.5)' }}>{app.name}</span>
-            </div>
-          ))}
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '20px' }} onClick={e => e.stopPropagation()}>
+            <input
+              type="text"
+              placeholder="🔍 Search Launchpad..."
+              value={launchpadSearch}
+              onChange={e => setLaunchpadSearch(e.target.value)}
+              autoFocus
+              className="glass-spotlight"
+              style={{
+                width: '320px', padding: '10px 16px', borderRadius: '20px',
+                fontSize: '14px', outline: 'none', border: '1px solid rgba(255,255,255,0.3)',
+                color: 'white', background: 'rgba(0,0,0,0.4)', textAlign: 'center'
+              }}
+            />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '32px', width: '100%', maxWidth: '900px', margin: '0 auto' }}>
+            {appsList
+              .filter(a => a.id !== 'launchpad')
+              .filter(a => a.name.toLowerCase().includes(launchpadSearch.toLowerCase()))
+              .map(app => (
+                <div
+                  key={app.id}
+                  onClick={(e) => { e.stopPropagation(); setShowLaunchpad(false); launchApp(app.id); }}
+                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'transform 0.15s' }}
+                >
+                  <div style={{
+                    width: '64px', height: '64px', borderRadius: '15px',
+                    overflow: 'hidden', boxShadow: '0 6px 20px rgba(0,0,0,.3)'
+                  }}>
+                    {app.icon}
+                  </div>
+                  <span style={{ fontSize: '12px', fontWeight: 500, color: 'white', textShadow: '0 1px 3px rgba(0,0,0,.8)' }}>{app.name}</span>
+                </div>
+              ))}
+          </div>
         </div>
       )}
 
-      {/* ══ Dock ══ */}
       <div className="dock-wrapper glass-dock">
         {dockApps.map((app, idx) => {
           if (app === 'divider') return <div key={`div-${idx}`} className="dock-divider" />;
@@ -1084,7 +1095,6 @@ export default function App() {
         })}
       </div>
 
-      {/* ══ Spotlight Search ══ */}
       {showSpotlight && (
         <div style={{
           position: 'absolute', top: '15%', left: '50%', transform: 'translateX(-50%)',
@@ -1097,9 +1107,19 @@ export default function App() {
               </svg>
               <input
                 type="text"
-                placeholder="Spotlight Search"
+                placeholder="Spotlight Search or Calculate (e.g. 12 * 8)..."
                 value={spotlightQuery}
                 onChange={e => setSpotlightQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && spotlightQuery.trim()) {
+                    const matches = appsList.filter(app => app.name.toLowerCase().includes(spotlightQuery.toLowerCase()));
+                    if (matches.length > 0) {
+                      launchApp(matches[0].id);
+                      setShowSpotlight(false);
+                      setSpotlightQuery('');
+                    }
+                  }
+                }}
                 autoFocus
                 style={{
                   background: 'none', border: 'none', outline: 'none',
@@ -1108,10 +1128,35 @@ export default function App() {
                 }}
               />
             </div>
+
             {spotlightQuery.trim() && (
               <>
                 <div className="menu-separator" style={{ margin: '8px 0 4px' }} />
-                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--label-3)', padding: '0 4px' }}>APPLICATIONS</div>
+
+                {(() => {
+                  try {
+                    const clean = spotlightQuery.trim().replace(/x/g, '*').replace(/÷/g, '/');
+                    if (/^[\d\s\+\-\*\/\%\(\)\.\^]+$/.test(clean) && /[0-9]/.test(clean)) {
+                      const expr = clean.replace(/\^/g, '**');
+                      const val = Function('"use strict"; return (' + expr + ')')();
+                      if (typeof val === 'number' && !isNaN(val) && isFinite(val)) {
+                        return (
+                          <div style={{
+                            background: 'color-mix(in srgb, var(--accent) 15%, transparent)',
+                            padding: '10px 14px', borderRadius: '10px', display: 'flex',
+                            alignItems: 'center', justifyContent: 'space-between', margin: '4px 0'
+                          }}>
+                            <span style={{ fontSize: '13px', color: 'var(--label-2)' }}>Calculation</span>
+                            <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--accent)' }}>= {val}</span>
+                          </div>
+                        );
+                      }
+                    }
+                  } catch (e) {}
+                  return null;
+                })()}
+
+                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--label-3)', padding: '0 4px', marginTop: '4px' }}>APPLICATIONS</div>
                 {appsList
                   .filter(app => app.name.toLowerCase().includes(spotlightQuery.toLowerCase()))
                   .map(app => (
@@ -1141,7 +1186,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Lock Screen */}
       {locked && <LockScreen onUnlock={() => setLocked(false)} />}
     </div>
   );

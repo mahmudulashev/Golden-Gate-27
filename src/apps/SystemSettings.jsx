@@ -303,24 +303,30 @@ export default function SystemSettings({
         return (
           <div>
             <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Wallpaper</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
               {[
-                { id: 'clear-lake', label: 'Clear Lake', color: '#0EA5E9' },
-                { id: 'sunset', label: 'Sunset', color: '#F97316' },
-                { id: 'forest', label: 'Forest', color: '#22C55E' },
-                { id: 'night', label: 'Night Sky', color: '#1E293B' },
-                { id: 'mountain', label: 'Mountain', color: '#6366F1' },
-                { id: 'desert', label: 'Desert', color: '#D97706' },
+                { id: 'clear-lake', label: 'Clear Lake', bg: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=600&q=80')" },
+                { id: 'sunset', label: 'Sunset', bg: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80')" },
+                { id: 'forest', label: 'Forest', bg: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80')" },
+                { id: 'night', label: 'Night Sky', bg: "linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=600&q=80')" },
+                { id: 'mountain', label: 'Mountain', bg: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80')" },
+                { id: 'desert', label: 'Desert', bg: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80')" },
+                { id: 'aurora', label: 'Aurora Emerald', bg: "linear-gradient(135deg, #0575E6 0%, #00F260 100%)" },
+                { id: 'cosmic', label: 'Cosmic Sunset', bg: "linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)" },
               ].map(wp => (
                 <div
                   key={wp.id}
                   onClick={() => onWallpaperChange && onWallpaperChange(wp.id, currentTheme)}
                   style={{
-                    height: '80px', borderRadius: '10px',
-                    background: wp.color, cursor: 'pointer',
-                    border: activeWallpaper === wp.id ? '3px solid var(--accent)' : '3px solid transparent',
+                    height: '90px', borderRadius: '12px',
+                    background: wp.bg, backgroundSize: 'cover', backgroundPosition: 'center',
+                    cursor: 'pointer',
+                    border: activeWallpaper === wp.id ? '3px solid var(--accent)' : '3px solid rgba(255,255,255,0.2)',
                     display: 'grid', placeItems: 'center', color: 'white',
-                    fontWeight: 600, fontSize: '12px'
+                    fontWeight: 700, fontSize: '13px',
+                    textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    transition: 'transform 0.15s, border 0.15s'
                   }}
                 >
                   {wp.label}
