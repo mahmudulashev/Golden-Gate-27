@@ -308,44 +308,19 @@ export default function App() {
   // ── Dock App Definitions Matching User Screenshot ──
   const dockApps = [
     { id: 'finder', name: 'Finder', badge: 0, bg: 'transparent', icon: (
-      <img src="https://cdn.jim-nielsen.com/macos/1024/finder-2025-11-13.png?rf=1024" alt="Finder" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      <img src="/icons/App Icon Finder.png" alt="Finder" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'safari', name: 'Safari', badge: 0, bg: 'transparent', icon: (
       <img src="https://cdn.jim-nielsen.com/macos/1024/safari-2025-11-14.png?rf=1024" alt="Safari" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'antigravity', name: 'Antigravity', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <rect width="120" height="120" rx="28" fill="#09090B"/>
-        <path d="M30 90 L60 26 L90 90 M42 66 L78 66" stroke="url(#arcG)" strokeWidth="10" strokeLinecap="round" fill="none"/>
-        <defs>
-          <linearGradient id="arcG" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#00C6FF"/><stop offset="100%" stopColor="#0072E3"/>
-          </linearGradient>
-        </defs>
-      </svg>
+      <img src="https://img.utdstc.com/icon/572/79c/57279caf8af06fd8bdeb8fd23b65284d882ff0555ad85a5389b08ab50504569a:600" alt="Antigravity" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '22%' }} />
     )},
     { id: 'pycharm', name: 'PyCharm', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <rect width="120" height="120" rx="28" fill="#121212"/>
-        <rect x="16" y="16" width="88" height="88" rx="16" fill="url(#pcG)"/>
-        <text x="28" y="78" fill="white" fontSize="42" fontWeight="900" fontFamily="sans-serif">PC</text>
-        <rect x="68" y="76" width="24" height="8" fill="#30D158"/>
-        <defs>
-          <linearGradient id="pcG" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#212121"/><stop offset="100%" stopColor="#000000"/>
-          </linearGradient>
-        </defs>
-      </svg>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/1d/PyCharm_Icon.svg" alt="PyCharm" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'launchpad', name: 'Launchpad', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <rect width="120" height="120" rx="28" fill="#E2E8F0"/>
-        {[0,1,2].map(r => [0,1,2].map(c => (
-          <circle key={`${r}${c}`} cx={32+c*28} cy={32+r*28} r={9} fill={
-            ['#FF5F57','#FEBC2E','#28C840','#3B82F6','#A855F7','#EC4899','#F97316','#10B981','#06B6D4'][r*3+c]
-          }/>
-        )))}
-      </svg>
+      <img src="/icons/Launchpad.png" alt="Launchpad" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'gemini', name: 'Google Gemini', badge: 0, bg: 'transparent', icon: (
       <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
@@ -359,13 +334,10 @@ export default function App() {
       </svg>
     )},
     { id: 'music', name: 'Music', badge: 0, bg: 'transparent', icon: (
-      <img src="https://cdn.jim-nielsen.com/macos/1024/music-2025-11-13.png?rf=1024" alt="Music" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-    )},
-    { id: 'appstore', name: 'App Store', badge: 0, bg: 'transparent', icon: (
-      <img src="https://cdn.jim-nielsen.com/macos/1024/apple-developer-2026-05-18.png?rf=1024" alt="App Store" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      <img src="/icons/App Icon Music.png" alt="Music" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'settings', name: 'System Settings', badge: 0, bg: 'transparent', icon: (
-      <img src="https://cdn.jim-nielsen.com/macos/1024/system-settings-2025-11-14.png?rf=1024" alt="System Settings" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      <img src="/icons/App Icon Settings.png" alt="System Settings" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'iphone', name: 'iPhone Mirroring', badge: 0, bg: 'transparent', icon: (
       <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
@@ -381,29 +353,13 @@ export default function App() {
     )},
     'divider',
     { id: 'edge', name: 'Microsoft Edge', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <rect width="120" height="120" rx="28" fill="#FFFFFF"/>
-        <path d="M26 72 C26 40 52 26 78 34 C60 38 52 52 68 60 C84 68 96 52 92 78 C84 98 48 98 30 84 Z" fill="url(#edgeG)"/>
-        <defs>
-          <linearGradient id="edgeG" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#0078D4"/><stop offset="50%" stopColor="#00BCF2"/><stop offset="100%" stopColor="#00E676"/>
-          </linearGradient>
-        </defs>
-      </svg>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Microsoft_Edge_logo_%282019%29.svg" alt="Microsoft Edge" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'telegram', name: 'Telegram', badge: 0, bg: 'transparent', icon: (
-      <img src="https://cdn.jim-nielsen.com/macos/1024/telegram-2021-05-18.png?rf=1024" alt="Telegram" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      <img src="https://cdn.jim-nielsen.com/macos/512/telegram-2021-07-12.png?rf=1024" alt="Telegram" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'chrome', name: 'Google Chrome', badge: 0, bg: 'transparent', icon: (
-      <svg viewBox="0 0 120 120" style={{width:'100%',height:'100%'}}>
-        <rect width="120" height="120" rx="28" fill="#FFFFFF"/>
-        <circle cx="60" cy="60" r="40" fill="#4285F4"/>
-        <circle cx="60" cy="60" r="18" fill="white"/>
-        <circle cx="60" cy="60" r="14" fill="#4285F4"/>
-        <path d="M60 20 L94 40 L60 60 Z" fill="#EA4335"/>
-        <path d="M94 40 L76 92 L60 60 Z" fill="#FBBC05"/>
-        <path d="M76 92 L26 72 L60 60 Z" fill="#34A853"/>
-      </svg>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" alt="Google Chrome" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )},
     { id: 'preview_win', name: 'Active Window', badge: 0, bg: 'transparent', icon: (
       <div style={{ width: '100%', height: '100%', borderRadius: '14px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.7)', boxShadow: '0 3px 10px rgba(0,0,0,0.3)', position: 'relative', background: '#0f172a' }}>
@@ -414,7 +370,7 @@ export default function App() {
       </div>
     )},
     { id: 'trash', name: 'Trash', badge: 0, bg: 'transparent', icon: (
-      <img src="https://cdn.jim-nielsen.com/macos/1024/trash-full-2021-05-18.png?rf=1024" alt="Trash" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      <img src="/icons/Trash Full.png" alt="Trash" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     )}
   ];
 
