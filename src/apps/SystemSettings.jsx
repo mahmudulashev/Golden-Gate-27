@@ -15,6 +15,17 @@ export default function SystemSettings({
   const [accentColor, setAccentColor] = useState('blue');
   const [iconStyle, setIconStyle] = useState('default');
 
+  // Interactive settings state
+  const [wifiOn, setWifiOn] = useState(true);
+  const [bluetoothOn, setBluetoothOn] = useState(true);
+  const [batteryMode, setBatteryMode] = useState('auto');
+  const [brightness, setBrightness] = useState(85);
+  const [soundVolume, setSoundVolume] = useState(75);
+  const [selectedSound, setSelectedSound] = useState('Glass');
+  const [dockPosition, setDockPosition] = useState('bottom');
+  const [dockSize, setDockSize] = useState(48);
+  const [searchQuery, setSearchQuery] = useState('');
+
   const accentColors = [
     { name: 'blue', color: '#007AFF' },
     { name: 'purple', color: '#A550A7' },
@@ -31,21 +42,13 @@ export default function SystemSettings({
     { id: 'wifi', label: 'Wi-Fi', icon: '📶' },
     { id: 'bluetooth', label: 'Bluetooth', icon: '᯽' },
     { id: 'network', label: 'Network', icon: '🌐' },
-    { id: 'vpn', label: 'VPN', icon: '🔒', sep: true },
     { id: 'battery', label: 'Battery', icon: '🔋', sep: true },
     { id: 'general', label: 'General', icon: '⚙️' },
-    { id: 'accessibility', label: 'Accessibility', icon: '♿' },
     { id: 'appearance', label: 'Appearance', icon: '🎨' },
-    { id: 'menubar', label: 'Menu Bar', icon: '▤' },
-    { id: 'siri', label: 'Apple Intelligence & Siri', icon: '🤖' },
     { id: 'dock', label: 'Desktop & Dock', icon: '⬜' },
     { id: 'displays', label: 'Displays', icon: '🖥️' },
     { id: 'wallpaper', label: 'Wallpaper', icon: '🏞️' },
-    { id: 'screensaver', label: 'Screen Saver', icon: '🌙' },
-    { id: 'notifications', label: 'Notifications', icon: '🔔' },
     { id: 'sound', label: 'Sound', icon: '🔊' },
-    { id: 'keyboard', label: 'Keyboard', icon: '⌨️' },
-    { id: 'trackpad', label: 'Trackpad', icon: '🖱️' },
     { id: 'privacy', label: 'Privacy & Security', icon: '🛡️' },
   ];
 
@@ -61,8 +64,233 @@ export default function SystemSettings({
     document.documentElement.style.setProperty('--accent-blue', colorMap[name] || '#007AFF');
   };
 
+  const filteredSidebar = sidebarItems.filter(item => 
+    item.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const renderContent = () => {
     switch (selectedPage) {
+      case 'account':
+        return (
+          <div>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Apple Account</h2>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--window-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--separator)', marginBottom: '24px' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(135deg, #1A73E8, #9B51E0)', display: 'grid', placeItems: 'center', color: 'white', fontSize: '24px', fontWeight: 700 }}>
+                MU
+              </div>
+              <div>
+                <div style={{ fontSize: '18px', fontWeight: 700 }}>Mahmud Ulashev</div>
+                <div style={{ fontSize: '12px', color: 'var(--label-2)', marginTop: '2px' }}>mahmud@ulashev.dev</div>
+                <div style={{ fontSize: '11px', color: 'var(--accent)', marginTop: '4px', fontWeight: 600 }}>Apple ID, iCloud, Media & Purchases</div>
+              </div>
+            </div>
+
+            <div style={{ background: 'var(--window-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--separator)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>iCloud Storage</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--label-2)', marginBottom: '6px' }}>
+                <span>42.5 GB of 200 GB Used</span>
+                <span>21%</span>
+              </div>
+              <div style={{ height: '8px', width: '100%', borderRadius: '4px', background: 'var(--separator)', overflow: 'hidden', display: 'flex' }}>
+                <div style={{ width: '12%', background: '#007AFF' }} />
+                <div style={{ width: '5%', background: '#FF9500' }} />
+                <div style={{ width: '4%', background: '#34C759' }} />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'wifi':
+        return (
+          <div>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Wi-Fi</h2>
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--window-bg)', padding: '14px 16px', borderRadius: '12px', border: '1px solid var(--separator)', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '20px' }}>📶</span>
+                <span style={{ fontSize: '14px', fontWeight: 600 }}>Wi-Fi</span>
+              </div>
+              <div
+                onClick={() => setWifiOn(!wifiOn)}
+                style={{
+                  width: '42px', height: '24px', borderRadius: '12px',
+                  background: wifiOn ? 'var(--accent)' : 'var(--label-3)',
+                  cursor: 'pointer', position: 'relative', transition: 'background .2s'
+                }}
+              >
+                <div style={{
+                  width: '20px', height: '20px', borderRadius: '50%',
+                  background: 'white', position: 'absolute', top: '2px',
+                  left: wifiOn ? '20px' : '2px', transition: 'left .2s'
+                }} />
+              </div>
+            </div>
+
+            {wifiOn && (
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--label-2)', textTransform: 'uppercase', marginBottom: '8px' }}>Known Networks</div>
+                <div style={{ background: 'var(--window-bg)', borderRadius: '12px', border: '1px solid var(--separator)', overflow: 'hidden' }}>
+                  {[
+                    { name: 'Golden Gate 5G', connected: true, signal: 'Strong' },
+                    { name: 'Dev_Yut_Student_5G', connected: false, signal: 'Strong' },
+                    { name: 'Home_WiFi_Mesh', connected: false, signal: 'Medium' }
+                  ].map((net, idx) => (
+                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: idx < 2 ? '1px solid var(--separator)' : 'none' }}>
+                      <span style={{ fontSize: '13px', fontWeight: net.connected ? 600 : 400 }}>{net.name} {net.connected && '✓'}</span>
+                      <span style={{ fontSize: '11px', color: 'var(--label-2)' }}>{net.connected ? 'Connected' : net.signal}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'bluetooth':
+        return (
+          <div>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Bluetooth</h2>
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--window-bg)', padding: '14px 16px', borderRadius: '12px', border: '1px solid var(--separator)', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '20px' }}>᯽</span>
+                <span style={{ fontSize: '14px', fontWeight: 600 }}>Bluetooth</span>
+              </div>
+              <div
+                onClick={() => setBluetoothOn(!bluetoothOn)}
+                style={{
+                  width: '42px', height: '24px', borderRadius: '12px',
+                  background: bluetoothOn ? 'var(--accent)' : 'var(--label-3)',
+                  cursor: 'pointer', position: 'relative', transition: 'background .2s'
+                }}
+              >
+                <div style={{
+                  width: '20px', height: '20px', borderRadius: '50%',
+                  background: 'white', position: 'absolute', top: '2px',
+                  left: bluetoothOn ? '20px' : '2px', transition: 'left .2s'
+                }} />
+              </div>
+            </div>
+
+            {bluetoothOn && (
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--label-2)', textTransform: 'uppercase', marginBottom: '8px' }}>My Devices</div>
+                <div style={{ background: 'var(--window-bg)', borderRadius: '12px', border: '1px solid var(--separator)', overflow: 'hidden' }}>
+                  {[
+                    { name: 'AirPods Pro', battery: '85%', connected: true, icon: '🎧' },
+                    { name: 'Magic Keyboard', battery: '92%', connected: true, icon: '⌨️' },
+                    { name: 'Magic Trackpad 2', battery: '68%', connected: true, icon: '🖱️' }
+                  ].map((dev, idx) => (
+                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: idx < 2 ? '1px solid var(--separator)' : 'none' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span>{dev.icon}</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600 }}>{dev.name}</span>
+                      </div>
+                      <span style={{ fontSize: '11px', color: 'var(--label-2)' }}>{dev.battery} • Connected</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'battery':
+        return (
+          <div>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Battery</h2>
+            
+            <div style={{ background: 'var(--window-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--separator)', marginBottom: '20px' }}>
+              <div style={{ fontSize: '13px', color: 'var(--label-2)', marginBottom: '4px' }}>Battery Level</div>
+              <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--accent)' }}>36%</div>
+              <div style={{ fontSize: '12px', color: '#34C759', marginTop: '2px', fontWeight: 600 }}>Battery Health: 100% Maximum Capacity</div>
+            </div>
+
+            <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>Energy Mode</div>
+            <div style={{ background: 'var(--window-bg)', borderRadius: '12px', border: '1px solid var(--separator)', overflow: 'hidden' }}>
+              {[
+                { id: 'low', label: 'Low Power Mode', desc: 'Reduces energy usage' },
+                { id: 'auto', label: 'Automatic', desc: 'Balanced performance' },
+                { id: 'high', label: 'High Performance', desc: 'Maximum processing speed' }
+              ].map((m, idx) => (
+                <div key={m.id} onClick={() => setBatteryMode(m.id)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: idx < 2 ? '1px solid var(--separator)' : 'none', cursor: 'pointer' }}>
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: batteryMode === m.id ? 600 : 400 }}>{m.label}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--label-2)' }}>{m.desc}</div>
+                  </div>
+                  {batteryMode === m.id && <span style={{ color: 'var(--accent)', fontWeight: 700 }}>✓</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'general':
+        return (
+          <div>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>General</h2>
+            
+            <div style={{ background: 'var(--window-bg)', padding: '20px', borderRadius: '14px', border: '1px solid var(--separator)', marginBottom: '20px', textAlign: 'center' }}>
+              <div style={{ fontSize: '42px', marginBottom: '8px' }}>💻</div>
+              <div style={{ fontSize: '18px', fontWeight: 700 }}>macOS 27 Sequoia</div>
+              <div style={{ fontSize: '12px', color: 'var(--label-2)', marginTop: '2px' }}>Version 27.2 Liquid Glass Edition</div>
+              <div style={{ marginTop: '14px', fontSize: '12px', color: 'var(--label-2)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div><strong>Model:</strong> Mac Studio (M3 Ultra)</div>
+                <div><strong>Memory:</strong> 64 GB Unified Memory</div>
+                <div><strong>Serial Number:</strong> C02G27KG91X8</div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'displays':
+        return (
+          <div>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Displays</h2>
+            
+            <div style={{ background: 'var(--window-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--separator)', marginBottom: '20px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>Brightness: {brightness}%</div>
+              <input
+                type="range" min="10" max="100" value={brightness}
+                onChange={e => setBrightness(Number(e.target.value))}
+                style={{ width: '100%', accentColor: 'var(--accent)' }}
+              />
+            </div>
+
+            <div style={{ background: 'var(--window-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--separator)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Built-in Liquid Retina XDR Display</div>
+              <div style={{ fontSize: '12px', color: 'var(--label-2)' }}>Resolution: 3024 × 1964 (Default for Display)</div>
+            </div>
+          </div>
+        );
+
+      case 'sound':
+        return (
+          <div>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Sound</h2>
+            
+            <div style={{ background: 'var(--window-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--separator)', marginBottom: '20px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>Output Volume: {soundVolume}%</div>
+              <input
+                type="range" min="0" max="100" value={soundVolume}
+                onChange={e => setSoundVolume(Number(e.target.value))}
+                style={{ width: '100%', accentColor: 'var(--accent)' }}
+              />
+            </div>
+
+            <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Alert Sound</div>
+            <div style={{ background: 'var(--window-bg)', borderRadius: '12px', border: '1px solid var(--separator)', overflow: 'hidden' }}>
+              {['Breeze', 'Funk', 'Glass', 'Hero', 'Ping', 'Pop'].map((snd, idx) => (
+                <div key={snd} onClick={() => setSelectedSound(snd)} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 16px', borderBottom: idx < 5 ? '1px solid var(--separator)' : 'none', cursor: 'pointer', fontSize: '13px' }}>
+                  <span>{snd}</span>
+                  {selectedSound === snd && <span style={{ color: 'var(--accent)', fontWeight: 700 }}>✓</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
       case 'appearance':
         return (
           <div>
@@ -73,9 +301,9 @@ export default function SystemSettings({
               <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>Appearance</div>
               <div style={{ display: 'flex', gap: '16px' }}>
                 {[
-                  { key: 'light', label: 'Light', bg: '#F5F5F5', fg: '#1E1E1E' },
-                  { key: 'dark', label: 'Dark', bg: '#2B2B2D', fg: '#F5F5F5' },
-                  { key: 'auto', label: 'Auto', bg: 'linear-gradient(135deg, #F5F5F5 50%, #2B2B2D 50%)', fg: '#1E1E1E' },
+                  { key: 'light', label: 'Light', bg: '#F5F5F5' },
+                  { key: 'dark', label: 'Dark', bg: '#2B2B2D' },
+                  { key: 'auto', label: 'Auto', bg: 'linear-gradient(135deg, #F5F5F5 50%, #2B2B2D 50%)' },
                 ].map(opt => (
                   <div key={opt.key} onClick={() => handleThemeChange(opt.key)} style={{ cursor: 'pointer', textAlign: 'center' }}>
                     <div style={{
@@ -83,39 +311,11 @@ export default function SystemSettings({
                       background: opt.bg,
                       border: currentTheme === opt.key ? `3px solid var(--accent)` : '3px solid var(--separator)',
                       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                      gap: '4px', overflow: 'hidden', position: 'relative'
+                      gap: '4px', overflow: 'hidden'
                     }}>
-                      {/* Mini window preview */}
-                      <div style={{
-                        width: '60px', height: '40px', borderRadius: '6px',
-                        background: opt.key === 'dark' ? '#3A3A3C' : 'white',
-                        boxShadow: '0 2px 8px rgba(0,0,0,.15)',
-                        display: 'flex', flexDirection: 'column'
-                      }}>
-                        <div style={{
-                          height: '10px', background: opt.key === 'dark' ? '#4A4A4C' : '#F0F0F0',
-                          borderRadius: '6px 6px 0 0',
-                          display: 'flex', alignItems: 'center', padding: '0 4px', gap: '2px'
-                        }}>
-                          <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FF5F57' }} />
-                          <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#FEBC2E' }} />
-                          <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#28C840' }} />
-                        </div>
-                        <div style={{ flex: 1, display: 'flex' }}>
-                          <div style={{ width: '15px', background: opt.key === 'dark' ? '#2B2B2D' : '#E8E8E8' }} />
-                          <div style={{ flex: 1 }} />
-                        </div>
-                      </div>
-                      {/* Mini dock */}
-                      <div style={{
-                        width: '40px', height: '8px', borderRadius: '4px',
-                        background: opt.key === 'dark' ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.08)'
-                      }} />
+                      <div style={{ width: '60px', height: '40px', borderRadius: '6px', background: opt.key === 'dark' ? '#3A3A3C' : 'white' }} />
                     </div>
-                    <div style={{
-                      fontSize: '12px', fontWeight: 500, marginTop: '6px',
-                      color: currentTheme === opt.key ? 'var(--accent)' : 'var(--label)'
-                    }}>
+                    <div style={{ fontSize: '12px', fontWeight: 500, marginTop: '6px', color: currentTheme === opt.key ? 'var(--accent)' : 'var(--label)' }}>
                       {opt.label}
                     </div>
                   </div>
@@ -135,109 +335,12 @@ export default function SystemSettings({
                       width: '28px', height: '28px', borderRadius: '50%',
                       background: ac.color, cursor: 'pointer',
                       border: accentColor === ac.name ? '3px solid var(--label)' : '2px solid transparent',
-                      boxShadow: accentColor === ac.name ? `0 0 0 2px ${ac.color}` : 'inset 0 0 0 1px rgba(0,0,0,.1)',
                       display: 'grid', placeItems: 'center'
                     }}
                   >
-                    {accentColor === ac.name && (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    )}
+                    {accentColor === ac.name && <span style={{ color: 'white', fontSize: '12px', fontWeight: 700 }}>✓</span>}
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* Highlight Color */}
-            <div style={{ marginBottom: '28px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>Highlight Color</div>
-              <select style={{
-                background: 'var(--window-bg)', border: '1px solid var(--separator)',
-                borderRadius: '8px', padding: '6px 12px', fontSize: '13px',
-                color: 'var(--label)', fontFamily: 'var(--font-ui)', outline: 'none',
-                width: '200px'
-              }}>
-                <option>Accent Color</option>
-                <option>Blue</option>
-                <option>Purple</option>
-                <option>Pink</option>
-                <option>Red</option>
-                <option>Orange</option>
-                <option>Yellow</option>
-                <option>Green</option>
-                <option>Graphite</option>
-              </select>
-            </div>
-
-            {/* Icon & Widget Style */}
-            <div style={{ marginBottom: '28px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>Icon & Widget Style</div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                {[
-                  { key: 'default', label: 'Default', desc: 'Colorful icons' },
-                  { key: 'dark', label: 'Dark', desc: 'Muted colors' },
-                  { key: 'tinted', label: 'Tinted', desc: 'Accent-tinted' },
-                  { key: 'clear', label: 'Clear', desc: 'Transparent' },
-                ].map(opt => (
-                  <div key={opt.key} onClick={() => setIconStyle(opt.key)} style={{ cursor: 'pointer', textAlign: 'center' }}>
-                    <div style={{
-                      width: '72px', height: '52px', borderRadius: '10px',
-                      background: 'var(--window-bg)',
-                      border: iconStyle === opt.key ? '2px solid var(--accent)' : '2px solid var(--separator)',
-                      display: 'grid', placeItems: 'center',
-                    }}>
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        {[0,1,2].map(i => (
-                          <div key={i} style={{
-                            width: '14px', height: '14px', borderRadius: '4px',
-                            background: opt.key === 'default' ? ['#FF3B30','#34C759','#007AFF'][i] :
-                                       opt.key === 'dark' ? ['#8E8E93','#636366','#48484A'][i] :
-                                       opt.key === 'tinted' ? 'var(--accent)' :
-                                       'rgba(0,0,0,.08)',
-                            opacity: opt.key === 'tinted' ? [0.4, 0.6, 0.8][i] :
-                                    opt.key === 'clear' ? 0.5 : 1
-                          }} />
-                        ))}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '11px', fontWeight: 500, marginTop: '4px', color: iconStyle === opt.key ? 'var(--accent)' : 'var(--label)' }}>
-                      {opt.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Sidebar icon size */}
-            <div style={{ marginBottom: '28px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: '13px', fontWeight: 600 }}>Sidebar Icon Size</div>
-                <select style={{
-                  background: 'var(--window-bg)', border: '1px solid var(--separator)',
-                  borderRadius: '8px', padding: '4px 10px', fontSize: '12px',
-                  color: 'var(--label)', fontFamily: 'var(--font-ui)', outline: 'none'
-                }}>
-                  <option>Small</option>
-                  <option selected>Medium</option>
-                  <option>Large</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Show scroll bars */}
-            <div style={{ marginBottom: '28px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: '13px', fontWeight: 600 }}>Show Scroll Bars</div>
-                <select style={{
-                  background: 'var(--window-bg)', border: '1px solid var(--separator)',
-                  borderRadius: '8px', padding: '4px 10px', fontSize: '12px',
-                  color: 'var(--label)', fontFamily: 'var(--font-ui)', outline: 'none'
-                }}>
-                  <option>Automatically based on mouse or trackpad</option>
-                  <option>When scrolling</option>
-                  <option>Always</option>
-                </select>
               </div>
             </div>
           </div>
@@ -248,9 +351,9 @@ export default function SystemSettings({
           <div>
             <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Desktop & Dock</h2>
             
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <div style={{ fontSize: '13px' }}>Dock Magnification</div>
+            <div style={{ background: 'var(--window-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--separator)', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600 }}>Dock Magnification</div>
                 <div
                   onClick={() => onDockMagnifyToggle(!dockMagnify)}
                   style={{
@@ -262,14 +365,13 @@ export default function SystemSettings({
                   <div style={{
                     width: '20px', height: '20px', borderRadius: '50%',
                     background: 'white', position: 'absolute', top: '2px',
-                    left: dockMagnify ? '20px' : '2px',
-                    transition: 'left .2s', boxShadow: '0 1px 3px rgba(0,0,0,.2)'
+                    left: dockMagnify ? '20px' : '2px', transition: 'left .2s'
                   }} />
                 </div>
               </div>
 
-              <div style={{ marginBottom: '12px' }}>
-                <div style={{ fontSize: '13px', marginBottom: '6px' }}>Glass Blur Amount: {blurAmount}px</div>
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Glass Blur Amount: {blurAmount}px</div>
                 <input
                   type="range" min="5" max="50" value={blurAmount}
                   onChange={e => onBlurChange(Number(e.target.value))}
@@ -277,8 +379,8 @@ export default function SystemSettings({
                 />
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', marginTop: '16px' }}>
-                <div style={{ fontSize: '13px' }}>Show Widgets on Desktop</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600 }}>Show Widgets on Desktop</div>
                 <div
                   onClick={() => onToggleWidgets && onToggleWidgets()}
                   style={{
@@ -290,8 +392,7 @@ export default function SystemSettings({
                   <div style={{
                     width: '20px', height: '20px', borderRadius: '50%',
                     background: 'white', position: 'absolute', top: '2px',
-                    left: showWidgets ? '20px' : '2px',
-                    transition: 'left .2s', boxShadow: '0 1px 3px rgba(0,0,0,.2)'
+                    left: showWidgets ? '20px' : '2px', transition: 'left .2s'
                   }} />
                 </div>
               </div>
@@ -305,6 +406,7 @@ export default function SystemSettings({
             <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Wallpaper</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
               {[
+                { id: 'arctic', label: 'Arctic Mountains', bg: "linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.15)), url('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=600&q=80')" },
                 { id: 'clear-lake', label: 'Clear Lake', bg: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=600&q=80')" },
                 { id: 'sunset', label: 'Sunset', bg: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80')" },
                 { id: 'forest', label: 'Forest', bg: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80')" },
@@ -323,7 +425,7 @@ export default function SystemSettings({
                     cursor: 'pointer',
                     border: activeWallpaper === wp.id ? '3px solid var(--accent)' : '3px solid rgba(255,255,255,0.2)',
                     display: 'grid', placeItems: 'center', color: 'white',
-                    fontWeight: 700, fontSize: '13px',
+                    fontWeight: 700, fontSize: '12px',
                     textShadow: '0 1px 4px rgba(0,0,0,0.8)',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                     transition: 'transform 0.15s, border 0.15s'
@@ -338,16 +440,10 @@ export default function SystemSettings({
 
       default:
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--label-2)' }}>
-            <div style={{ fontSize: '48px', marginBottom: '12px' }}>
-              {sidebarItems.find(i => i.id === selectedPage)?.icon || '⚙️'}
-            </div>
-            <div style={{ fontSize: '18px', fontWeight: 600 }}>
-              {sidebarItems.find(i => i.id === selectedPage)?.label || 'Settings'}
-            </div>
-            <div style={{ fontSize: '13px', color: 'var(--label-3)', marginTop: '6px' }}>
-              Coming soon in macOS 27
-            </div>
+          <div style={{ background: 'var(--window-bg)', padding: '20px', borderRadius: '14px', border: '1px solid var(--separator)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Privacy & Security</h2>
+            <div style={{ fontSize: '12px', color: 'var(--label-2)' }}>FileVault Encryption: Enabled (On)</div>
+            <div style={{ fontSize: '12px', color: 'var(--label-2)', marginTop: '4px' }}>Touch ID & Password Security: Active</div>
           </div>
         );
     }
@@ -367,14 +463,20 @@ export default function SystemSettings({
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--label-3)" strokeWidth="2">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input type="text" placeholder="Search" style={{
-              background: 'none', border: 'none', outline: 'none',
-              fontSize: '12px', color: 'var(--label)', fontFamily: 'var(--font-ui)', width: '100%'
-            }} />
+            <input 
+              type="text" 
+              placeholder="Search Settings" 
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              style={{
+                background: 'none', border: 'none', outline: 'none',
+                fontSize: '12px', color: 'var(--label)', fontFamily: 'var(--font-ui)', width: '100%'
+              }} 
+            />
           </div>
         </div>
 
-        {sidebarItems.map(item => (
+        {filteredSidebar.map(item => (
           <React.Fragment key={item.id}>
             {item.sep && <div style={{ height: '1px', background: 'var(--separator)', margin: '6px 12px' }} />}
             <div
