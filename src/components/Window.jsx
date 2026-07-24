@@ -29,20 +29,54 @@ export default function Window({
   
   const windowRef = useRef(null);
 
-  // Position bounding
+  // Position & responsive size bounding
   useEffect(() => {
-    const sw = window.innerWidth;
-    const sh = window.innerHeight;
-    if (position.x + 50 > sw || position.y + 50 > sh) {
-      setPosition({
-        x: Math.max(20, (sw - size.width) / 2 + (id.charCodeAt(0) % 5) * 10),
-        y: Math.max(40, (sh - size.height) / 2 + (id.charCodeAt(0) % 5) * 10)
-      });
-    }
-    // Remove opening animation class after animation
+    const handleResize = () => {
+      const sw = window.innerWidth;
+      const sh = window.innerHeight;
+      if (sw <= 768) {
+        setPosition({ x: 6, y: 30 });
+        setSize({ width: Math.max(300, sw - 12), height: Math.max(350, sh - 95) });
+      } else {
+        setSize(prev => ({
+          width: Math.min(prev.width, sw - 20),
+          height: Math.min(prev.height, sh - 70)
+        }));
+        setPosition(prev => ({
+          x: Math.max(10, Math.min(prev.x, sw - 100)),
+          y: Math.max(25, Math.min(prev.y, sh - 100))
+        }));
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
     const timer = setTimeout(() => setIsNew(false), 400);
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
+    };
+  }, [id]);
+
+  if (!isOpen) return null;
+
+  const windowStyles = isMaximized
+    ? {
+        top: '25px',
+        left: '0px',
+        width: '100vw',
+        height: 'calc(100vh - 95px)',
+        zIndex,
+        borderRadius: 0
+      }
+    : {
+        top: `${position.y}px`,
+        left: `${position.x}px`,
+        width: `${size.width}px`,
+        height: `${size.height}px`,
+        maxWidth: 'calc(100vw - 12px)',
+        maxHeight: 'calc(100vh - 70px)',
+        zIndex
+      };
 
   // Handle Dragging
   const handleDragMouseDown = (e) => {
@@ -121,25 +155,6 @@ export default function Window({
       window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [dragStart, resizeType, resizeStart, position, size]);
-
-  if (!isOpen) return null;
-
-  const windowStyles = isMaximized
-    ? {
-        top: '25px',
-        left: '0px',
-        width: '100vw',
-        height: 'calc(100vh - 95px)',
-        zIndex,
-        borderRadius: 0
-      }
-    : {
-        top: `${position.y}px`,
-        left: `${position.x}px`,
-        width: `${size.width}px`,
-        height: `${size.height}px`,
-        zIndex
-      };
 
   return (
     <div

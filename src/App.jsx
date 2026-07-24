@@ -29,6 +29,7 @@ import Numbers from './apps/Numbers';
 import Reminders from './apps/Reminders';
 
 const wallpaperMap = {
+  'arctic': "linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.15)), url('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=2400&q=90')",
   'clear-lake': "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=2000&q=80')",
   'sunset': "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80')",
   'forest': "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2000&q=80')",
@@ -42,7 +43,7 @@ const wallpaperMap = {
 export default function App() {
   const [locked, setLocked] = useState(true);
   const [theme, setTheme] = useState('light');
-  const [wallpaper, setWallpaper] = useState('clear-lake');
+  const [wallpaper, setWallpaper] = useState('arctic');
   const [blurAmount, setBlurAmount] = useState(25);
   const [dockMagnify, setDockMagnify] = useState(false);
   const [bouncingAppId, setBouncingAppId] = useState(null);
@@ -958,22 +959,31 @@ export default function App() {
 
       {showLaunchpad && (
         <div className="launchpad-overlay" onClick={() => setShowLaunchpad(false)}>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '20px' }} onClick={e => e.stopPropagation()}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '40px', marginTop: '20px' }} onClick={e => e.stopPropagation()}>
             <input
               type="text"
-              placeholder="🔍 Search Launchpad..."
+              placeholder="Search Launchpad..."
               value={launchpadSearch}
               onChange={e => setLaunchpadSearch(e.target.value)}
               autoFocus
               className="glass-spotlight"
               style={{
-                width: '320px', padding: '10px 16px', borderRadius: '20px',
-                fontSize: '14px', outline: 'none', border: '1px solid rgba(255,255,255,0.3)',
-                color: 'white', background: 'rgba(0,0,0,0.4)', textAlign: 'center'
+                width: '280px', padding: '9px 18px', borderRadius: '12px',
+                fontSize: '13px', outline: 'none', border: '1px solid rgba(255,255,255,0.25)',
+                color: 'white', background: 'rgba(255,255,255,0.18)', textAlign: 'center',
+                backdropFilter: 'blur(20px)'
               }}
             />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '32px', width: '100%', maxWidth: '900px', margin: '0 auto' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
+            gap: '40px 24px',
+            width: '100%',
+            maxWidth: '1000px',
+            margin: '0 auto',
+            justifyItems: 'center'
+          }}>
             {appsList
               .filter(a => a.id !== 'launchpad')
               .filter(a => a.name.toLowerCase().includes(launchpadSearch.toLowerCase()))
@@ -981,15 +991,28 @@ export default function App() {
                 <div
                   key={app.id}
                   onClick={(e) => { e.stopPropagation(); setShowLaunchpad(false); launchApp(app.id); }}
-                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'transform 0.15s' }}
+                  className="launchpad-item"
+                  style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    gap: '10px', cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                    width: '100px'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                 >
                   <div style={{
-                    width: '64px', height: '64px', borderRadius: '15px',
-                    overflow: 'hidden', boxShadow: '0 6px 20px rgba(0,0,0,.3)'
+                    width: '68px', height: '68px', borderRadius: '16px',
+                    overflow: 'hidden', filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.35))'
                   }}>
                     {app.icon}
                   </div>
-                  <span style={{ fontSize: '12px', fontWeight: 500, color: 'white', textShadow: '0 1px 3px rgba(0,0,0,.8)' }}>{app.name}</span>
+                  <span style={{
+                    fontSize: '12px', fontWeight: 500, color: 'white',
+                    textAlign: 'center', textShadow: '0 1px 4px rgba(0,0,0,0.9)',
+                    lineHeight: 1.2, wordBreak: 'break-word'
+                  }}>
+                    {app.name}
+                  </span>
                 </div>
               ))}
           </div>
@@ -1142,7 +1165,7 @@ export default function App() {
         </div>
       )}
 
-      {locked && <LockScreen onUnlock={() => setLocked(false)} />}
+      {locked && <LockScreen onUnlock={() => setLocked(false)} wallpaper={wallpaperMap[wallpaper]} username="Mahmud Ulashev" />}
     </div>
   );
 }
