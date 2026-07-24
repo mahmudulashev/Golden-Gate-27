@@ -1185,21 +1185,38 @@ input[type="range"]::-webkit-slider-thumb:active {
 
 @media (max-width: 768px) {
   :root {
-    --dock-icon-size: 38px;
-    --dock-gap: 5px;
-    --dock-padding: 4px 8px;
-    --menubar-h: 26px;
+    --dock-icon-size: 36px;
+    --dock-gap: 4px;
+    --dock-padding: 3px 6px;
+    --menubar-h: 24px;
+  }
+
+  .lock-screen-time {
+    font-size: clamp(56px, 15vw, 100px);
+    margin-top: 2px;
+  }
+
+  .lock-screen-date {
+    font-size: clamp(14px, 3.5vw, 20px);
   }
 
   .dock-wrapper {
-    max-width: 96vw;
+    max-width: 98vw;
     overflow-x: auto;
-    bottom: 6px;
-    border-radius: 18px;
+    bottom: 4px;
+    border-radius: 14px;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    padding: 3px 6px;
+  }
+
+  .dock-wrapper::-webkit-scrollbar {
+    display: none;
   }
 
   .dock-icon-wrapper {
     flex-shrink: 0;
+    touch-action: manipulation;
   }
 
   .menu-bar {
@@ -1207,37 +1224,37 @@ input[type="range"]::-webkit-slider-thumb:active {
     font-size: 11px;
   }
 
-  .menu-bar-left .menu-item:nth-child(n+5) {
+  .menu-bar-left .menu-item:nth-child(n+4) {
     display: none;
   }
 
   .widgets-panel {
-    width: calc(100vw - 20px);
-    right: 10px;
-    top: 32px;
-    max-height: calc(100vh - 100px);
+    width: calc(100vw - 16px);
+    right: 8px;
+    top: 28px;
+    max-height: calc(100vh - 80px);
     overflow-y: auto;
   }
 
   .glass-panel {
-    width: calc(100vw - 20px) !important;
-    right: 10px !important;
+    width: calc(100vw - 16px) !important;
+    right: 8px !important;
   }
 
   .spotlight-modal {
-    width: calc(100vw - 32px) !important;
+    width: calc(100vw - 24px) !important;
   }
 
   .finder-sidebar, .notes-sidebar, .settings-sidebar {
-    width: 150px;
+    width: 130px;
   }
 
   .notes-list {
-    width: 160px;
+    width: 140px;
   }
 
   .launchpad-overlay {
-    padding: 50px 16px 20px;
+    padding: 40px 12px 16px;
   }
 
   .glass-window {
@@ -1245,9 +1262,9 @@ input[type="range"]::-webkit-slider-thumb:active {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .finder-sidebar, .notes-sidebar, .settings-sidebar {
-    width: 120px;
+    width: 105px;
   }
 
   .menu-bar-left .menu-item:nth-child(n+3) {
@@ -1255,7 +1272,8 @@ input[type="range"]::-webkit-slider-thumb:active {
   }
 
   .dock-wrapper {
-    padding: 4px 6px;
+    padding: 3px 4px;
+    gap: 3px;
   }
 }
 

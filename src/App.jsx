@@ -948,7 +948,7 @@ export default function App() {
 
       <div className="desktop-icons-grid">
         {desktopItems.map(item => (
-          <div key={item.id} className="desktop-icon" onDoubleClick={() => { launchApp(item.app || 'finder'); }}>
+          <div key={item.id} className="desktop-icon" onClick={() => launchApp(item.app || 'finder')} onDoubleClick={() => launchApp(item.app || 'finder')}>
             <div className="desktop-icon-img">
               {item.type === 'folder' ? (
                 <svg viewBox="0 0 64 64" width="48" height="48">

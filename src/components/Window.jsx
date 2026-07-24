@@ -34,9 +34,9 @@ export default function Window({
     const handleResize = () => {
       const sw = window.innerWidth;
       const sh = window.innerHeight;
-      if (sw <= 768) {
-        setPosition({ x: 6, y: 30 });
-        setSize({ width: Math.max(300, sw - 12), height: Math.max(350, sh - 95) });
+      if (sw <= 850 || sh <= 550) {
+        setPosition({ x: 4, y: 25 });
+        setSize({ width: Math.max(280, sw - 8), height: Math.max(220, sh - 55) });
       } else {
         setSize(prev => ({
           width: Math.min(prev.width, sw - 20),
@@ -59,22 +59,24 @@ export default function Window({
 
   if (!isOpen) return null;
 
-  const windowStyles = isMaximized
+  const isMobileScreen = typeof window !== 'undefined' && (window.innerWidth <= 768 || window.innerHeight <= 520);
+
+  const windowStyles = (isMaximized || isMobileScreen)
     ? {
-        top: '25px',
+        top: '24px',
         left: '0px',
         width: '100vw',
-        height: 'calc(100vh - 95px)',
+        height: isMobileScreen ? 'calc(100vh - 58px)' : 'calc(100vh - 95px)',
         zIndex,
-        borderRadius: 0
+        borderRadius: isMobileScreen ? '12px 12px 0 0' : 0
       }
     : {
         top: `${position.y}px`,
         left: `${position.x}px`,
         width: `${size.width}px`,
         height: `${size.height}px`,
-        maxWidth: 'calc(100vw - 12px)',
-        maxHeight: 'calc(100vh - 70px)',
+        maxWidth: 'calc(100vw - 8px)',
+        maxHeight: 'calc(100vh - 60px)',
         zIndex
       };
 
