@@ -56,6 +56,24 @@ export default function App() {
   const [dockMagnify, setDockMagnify] = useState(false);
   const [bouncingAppId, setBouncingAppId] = useState(null);
   const [showWidgets, setShowWidgets] = useState(true);
+  const [isPortraitMobile, setIsPortraitMobile] = useState(false);
+  const [dismissRotateHint, setDismissRotateHint] = useState(false);
+
+  useEffect(() => {
+    const handleOrientation = () => {
+      const isMobile = window.innerWidth <= 850 || window.innerHeight <= 500;
+      const isPortrait = window.innerHeight > window.innerWidth;
+      setIsPortraitMobile(isMobile && isPortrait);
+    };
+
+    handleOrientation();
+    window.addEventListener('resize', handleOrientation);
+    window.addEventListener('orientationchange', handleOrientation);
+    return () => {
+      window.removeEventListener('resize', handleOrientation);
+      window.removeEventListener('orientationchange', handleOrientation);
+    };
+  }, []);
 
   const menuDropdowns = {
     file: [
@@ -1182,6 +1200,27 @@ export default function App() {
       )}
 
       {locked && <LockScreen onUnlock={() => setLocked(false)} wallpaper={wallpaperMap[wallpaper]} username="Mahmud Ulashev" />}
+
+      {/* Mobile Device Rotation Overlay */}
+      {isPortraitMobile && !dismissRotateHint && (
+        <div className="rotate-device-overlay" onClick={e => e.stopPropagation()}>
+          <div className="rotate-phone-icon-box">
+            <span className="rotate-phone-anim">📱</span>
+          </div>
+          <div className="rotate-title">Iltimos, telefoningizni yonboshiga burib foydalaning</div>
+          <div className="rotate-subtitle">
+            macOS 27 interfeysidan to'liq va qulay foydalanish uchun qurilmangizni gorizontal (landscape) holatga o'tkazing. 🔄
+          </div>
+          <div className="rotate-btn-group">
+            <button className="rotate-btn-primary" onClick={() => setDismissRotateHint(true)}>
+              Ekranni yonbosh qildim / Tushundim
+            </button>
+            <button className="rotate-btn-secondary" onClick={() => setDismissRotateHint(true)}>
+              Baribir davom etish
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
