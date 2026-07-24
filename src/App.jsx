@@ -27,6 +27,14 @@ import Pages from './apps/Pages';
 import Keynote from './apps/Keynote';
 import Numbers from './apps/Numbers';
 import Reminders from './apps/Reminders';
+import AntigravityApp from './apps/AntigravityApp';
+import PyCharmApp from './apps/PyCharmApp';
+import GeminiApp from './apps/GeminiApp';
+import IPhoneMirroringApp from './apps/IPhoneMirroringApp';
+import TelegramApp from './apps/TelegramApp';
+import EdgeApp from './apps/EdgeApp';
+import ChromeApp from './apps/ChromeApp';
+import TrashApp from './apps/TrashApp';
 
 const wallpaperMap = {
   'arctic': "linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.15)), url('https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=2400&q=90')",
@@ -190,7 +198,16 @@ export default function App() {
     pages: { title: 'Pages', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
     keynote: { title: 'Keynote', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
     numbers: { title: 'Numbers', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
-    reminders: { title: 'Reminders', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 }
+    reminders: { title: 'Reminders', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    antigravity: { title: 'Antigravity IDE', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    pycharm: { title: 'PyCharm', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    gemini: { title: 'Google Gemini', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    iphone: { title: 'iPhone Mirroring', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    telegram: { title: 'Telegram', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    edge: { title: 'Microsoft Edge', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    chrome: { title: 'Google Chrome', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    trash: { title: 'Trash', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 },
+    preview_win: { title: 'Active Window', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 1 }
   });
 
   const [topWindowId, setTopWindowId] = useState(null);
@@ -381,6 +398,7 @@ export default function App() {
   // ── App Content Mapping ──
   const getAppContent = (winId) => {
     switch(winId) {
+      case 'finder': return <Finder />;
       case 'safari': return <Safari />;
       case 'terminal': return <Terminal />;
       case 'notes': return <Notes />;
@@ -398,8 +416,18 @@ export default function App() {
       case 'appletv': return <AppleTV />;
       case 'news': return <News />;
       case 'pages': return <Pages />;
+      case 'keynote': return <Keynote />;
       case 'numbers': return <Numbers />;
       case 'reminders': return <Reminders />;
+      case 'antigravity': return <AntigravityApp />;
+      case 'pycharm': return <PyCharmApp />;
+      case 'gemini': return <GeminiApp />;
+      case 'iphone': return <IPhoneMirroringApp />;
+      case 'telegram': return <TelegramApp />;
+      case 'edge': return <EdgeApp />;
+      case 'chrome': return <ChromeApp />;
+      case 'trash': return <TrashApp />;
+      case 'preview_win': return <Safari />;
       case 'settings': return (
         <SystemSettings
           activeWallpaper={wallpaper}
@@ -924,21 +952,9 @@ export default function App() {
         ))}
       </div>
 
-      <Window
-        id="finder" title="Documents"
-        isOpen={windows.finder.isOpen} isMinimized={windows.finder.isMinimized}
-        isMaximized={windows.finder.isMaximized} zIndex={windows.finder.zIndex}
-        active={topWindowId === 'finder'}
-        onClose={() => closeWindow('finder')} onMinimize={() => toggleMinimize('finder')}
-        onMaximize={() => toggleMaximize('finder')} onFocus={focusWindow}
-        initialX={70} initialY={130} initialWidth={700} initialHeight={460}
-      >
-        <Finder />
-      </Window>
-
-      {Object.keys(windows).filter(k => k !== 'finder').map(winId => {
+      {Object.keys(windows).map(winId => {
         const win = windows[winId];
-        if (!win.isOpen) return null;
+        if (!win?.isOpen) return null;
         return (
           <Window
             key={winId} id={winId} title={win.title}
@@ -947,10 +963,10 @@ export default function App() {
             active={topWindowId === winId}
             onClose={() => closeWindow(winId)} onMinimize={() => toggleMinimize(winId)}
             onMaximize={() => toggleMaximize(winId)} onFocus={focusWindow}
-            initialX={200 + (winId.charCodeAt(0) % 5) * 30}
-            initialY={100 + (winId.charCodeAt(0) % 4) * 20}
-            initialWidth={winId === 'calculator' ? 320 : 720}
-            initialHeight={winId === 'calculator' ? 480 : 500}
+            initialX={winId === 'finder' ? 70 : 180 + (winId.charCodeAt(0) % 5) * 30}
+            initialY={winId === 'finder' ? 120 : 90 + (winId.charCodeAt(0) % 4) * 20}
+            initialWidth={winId === 'calculator' ? 320 : 760}
+            initialHeight={winId === 'calculator' ? 480 : 520}
           >
             {getAppContent(winId)}
           </Window>
@@ -1033,8 +1049,8 @@ export default function App() {
                   setShowLaunchpad(!showLaunchpad);
                   return;
                 }
-                if (windows[app.id].isOpen) {
-                  if (topWindowId === app.id && !windows[app.id].isMinimized) {
+                if (windows[app.id]?.isOpen) {
+                  if (topWindowId === app.id && !windows[app.id]?.isMinimized) {
                     toggleMinimize(app.id);
                   } else {
                     focusWindow(app.id);
